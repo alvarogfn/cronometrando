@@ -1,0 +1,2 @@
+export const TIMER_TIMEOUT = 1000;
+export const TIMER_DEFAULT_DURATION = 3600;

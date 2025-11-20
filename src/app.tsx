@@ -1,6 +1,8 @@
-import Stopwatch from "./components/stopwatch.tsx";
+import Statistics from "./components/statistics.tsx";
+import QuestionStopwatch from "./components/stopwatch-question.tsx";
+import StopwatchTest from "./components/stopwatch-test.tsx";
 import FluentProvider from "./providers/fluent-provider.tsx";
-import { Card, makeStyles } from "@fluentui/react-components";
+import { makeStyles } from "@fluentui/react-components";
 
 const useClasses = makeStyles({
   root: {
@@ -13,27 +15,23 @@ const useClasses = makeStyles({
     justifyContent: "center",
   },
   container: {
-    maxWidth: "800px",
+    maxWidth: "1000px",
     display: "grid",
-    gridAutoColumns: "6fr 4fr",
-    gridAutoRows: "8fr 2fr",
-    gridAutoFlow: "row",
+    gridTemplateAreas: "'a a b' 'a a b' 'c c c'",
     margin: "0 auto",
     width: "100%",
-    flexWrap: "wrap",
-    gap: "20px",
+    flexFlow: "column wrap",
+    gap: "10px",
   },
   testStopwatch: {
-    gridColumn: "1 / 2",
-    gridRow: "1 / 3",
+    gridArea: "b",
+    flexGrow: 1,
   },
   questionStopwatch: {
-    gridColumn: "2 / 3",
-    gridRow: "1 / 2",
+    gridArea: "a",
   },
   statistics: {
-    gridColumn: "2 / 3",
-    gridRow: "2 / 3",
+    gridArea: "c",
   },
   gridItem: {
     width: "100%",
@@ -47,14 +45,14 @@ function App() {
     <FluentProvider>
       <div className={classes.root}>
         <div className={classes.container}>
-          <div className={classes.testStopwatch}>
-            <Stopwatch title="Prova" className={classes.gridItem} />
-          </div>
           <div className={classes.questionStopwatch}>
-            <Stopwatch title="Questão" className={classes.gridItem} />
+            <QuestionStopwatch className={classes.gridItem} />
+          </div>
+          <div className={classes.testStopwatch}>
+            <StopwatchTest className={classes.gridItem} />
           </div>
           <div className={classes.statistics}>
-            <Card className={classes.gridItem} />
+            <Statistics className={classes.statistics} />
           </div>
         </div>
       </div>

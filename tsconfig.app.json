@@ -8,6 +8,8 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
+    "typeRoots": ["./types/localbase.d.ts"],
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -15,8 +17,13 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
-      "*": ["src/*"]
+      "components/*": ["src/components/*"],
+      "api/*": ["src/api/*"],
+      "hooks/*": ["src/hooks/*"],
+      "providers/*": ["src/providers/*"],
+      "helpers/*": ["src/helpers/*"]
     },
     /* Linting */
     "strict": true,

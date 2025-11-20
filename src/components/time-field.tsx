@@ -61,7 +61,7 @@ function TimeField<Form extends FieldValues>({
     },
     {
       onAccept: (_, mask) => {
-        field.onChange(mask.unmaskedValue);
+        field.onChange(mask.value);
       },
       defaultValue: field.value,
     },
@@ -73,6 +73,8 @@ function TimeField<Form extends FieldValues>({
     <Input
       className={className}
       size="large"
+      disabled={field.disabled}
+      name={field.name}
       onBlur={field.onBlur}
       value={value}
       ref={inputRef}

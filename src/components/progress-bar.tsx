@@ -4,7 +4,7 @@ import type { BaseProps } from "../helpers/base-props.ts";
 
 const MAX_WIDTH = 100;
 
-function computeWithPercentage(percentage: number) {
+function widthWithPercentage(percentage: number) {
   if (percentage > 1) return 1;
   if (percentage < 0) return 0;
 
@@ -13,6 +13,7 @@ function computeWithPercentage(percentage: number) {
 
 interface ProgressBarProps extends BaseProps {
   percentage: number;
+  variant?: "normal" | "warn";
 }
 
 const useClasses = makeStyles({
@@ -31,14 +32,27 @@ const useClasses = makeStyles({
   },
 });
 
-function ProgressBar({ percentage, className }: ProgressBarProps) {
+function ProgressBar({
+  percentage,
+  className,
+  variant = "normal",
+}: ProgressBarProps) {
   const classes = useClasses();
+
+  const style =
+    variant === "warn"
+      ? { backgroundColor: tokens.colorPaletteRedBackground3 }
+      : {};
+
   return (
     <div className={mergeClasses(className, classes.container)}>
       <div
-        style={{ width: computeWithPercentage(percentage) }}
+        style={{
+          width: widthWithPercentage(percentage),
+          ...style,
+        }}
         className={classes.innerContainer}
-      ></div>
+      />
     </div>
   );
 }

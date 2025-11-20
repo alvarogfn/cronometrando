@@ -14,12 +14,20 @@ interface StopwatchTimerProps extends BaseProps {
   countedDuration: number;
 }
 
+// function compute(countedDuration: number, totalDuration: number) {
+//   const percentage = countedDuration / totalDuration;
+//
+//   return percentage;
+// }
+
 function StopwatchTimer({
   totalDuration,
   countedDuration,
   ...props
 }: StopwatchTimerProps) {
   const classes = useClasses();
+
+  const percentage = (totalDuration - countedDuration) / totalDuration;
 
   return (
     <div
@@ -33,7 +41,7 @@ function StopwatchTimer({
           width: "100%",
         }}
       >
-        <ProgressBar percentage={countedDuration / totalDuration} />
+        <ProgressBar variant={"normal"} percentage={percentage} />
         <Text
           style={{ padding: "15px" }}
           size={800}

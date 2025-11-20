@@ -9,17 +9,24 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import { SaveFilled } from "@fluentui/react-icons";
+import { formatTimeToHHMMSS } from "helpers/format-time-to-HHMMSS.ts";
+import { getSecondsFromHHMMSS } from "helpers/get-seconds-from-HHMMSS.ts";
 import { type DeepPartial, type SubmitHandler, useForm } from "react-hook-form";
 import TimeField from "../components/time-field.tsx";
 
-interface Form {
-  duration: string;
+interface InternalForm {
+  totalDuration: string;
+}
+
+interface ExternalForm {
+  totalDuration: number;
 }
 
 interface StopwatchEditModalProps {
-  defaultValues: DeepPartial<Form>;
-  values: Form;
-  onSubmit: (value: Form) => void;
+  defaultValues: DeepPartial<ExternalForm>;
+  values: ExternalForm;
+  onSubmit: (value: ExternalForm) => void;
+  disabled: boolean;
 }
 
 const useClasses = makeStyles({
@@ -33,16 +40,20 @@ function StopwatchEditModal({
   defaultValues,
   onSubmit,
   values,
+  disabled,
 }: StopwatchEditModalProps) {
+  const totalDuration = formatTimeToHHMMSS(defaultValues["totalDuration"] ?? 0);
+
   const classes = useClasses();
 
-  const form = useForm<Form>({
-    values: values,
-    defaultValues: defaultValues,
+  const form = useForm<InternalForm>({
+    values: { totalDuration: formatTimeToHHMMSS(values.totalDuration) },
+    defaultValues: { totalDuration },
   });
 
-  const submitHandler: SubmitHandler<Form> = (value) => {
-    onSubmit(value);
+  const submitHandler: SubmitHandler<InternalForm> = (value) => {
+    const totalDuration = getSecondsFromHHMMSS(value.totalDuration);
+    onSubmit({ totalDuration });
   };
 
   return (
@@ -51,10 +62,11 @@ function StopwatchEditModal({
         <DialogTitle>Editar Temporizador</DialogTitle>
         <DialogContent>
           <TimeField
+            disabled={disabled}
             className={classes.timeField}
-            defaultValue={defaultValues["duration"]}
+            defaultValue={totalDuration}
             control={form.control}
-            name="duration"
+            name="totalDuration"
           />
         </DialogContent>
         <DialogActions>

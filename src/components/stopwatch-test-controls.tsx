@@ -1,9 +1,5 @@
 import { Button, makeStyles, mergeClasses } from "@fluentui/react-components";
-import {
-  ArrowResetRegular,
-  PauseFilled,
-  PlayFilled,
-} from "@fluentui/react-icons";
+import { StopFilled, PauseFilled, PlayFilled } from "@fluentui/react-icons";
 import type { BaseProps } from "../helpers/base-props.ts";
 
 const useClasses = makeStyles({
@@ -15,23 +11,28 @@ const useClasses = makeStyles({
   },
 });
 
-interface StopwatchControlsProps extends BaseProps {
+interface StopwatchTestControlsProps extends BaseProps {
   isPaused: boolean;
+  onStart: () => void;
   onPlay: () => void;
+  onStop: () => void;
   onPause: () => void;
-  onReset: () => void;
+  isRunning: boolean;
 }
 
-function StopwatchControls({
+function StopwatchTestControls({
   isPaused,
+  onStart,
   onPlay,
+  isRunning,
   onPause,
-  onReset,
+  onStop,
   ...props
-}: StopwatchControlsProps) {
+}: StopwatchTestControlsProps) {
   const classes = useClasses();
 
   const PlayOrPause = isPaused ? PlayFilled : PauseFilled;
+  const action = isRunning ? (isPaused ? onPlay : onPause) : onStart;
 
   return (
     <div
@@ -43,23 +44,22 @@ function StopwatchControls({
         shape="circular"
         onClick={(e) => {
           e.preventDefault();
-
-          if (isPaused) onPlay();
-          else onPause();
+          action();
         }}
         icon={<PlayOrPause />}
       />
       <Button
         size="large"
         shape="circular"
+        disabled={!isRunning}
         onClick={(e) => {
           e.preventDefault();
-          onReset();
+          onStop();
         }}
-        icon={<ArrowResetRegular />}
+        icon={<StopFilled />}
       />
     </div>
   );
 }
 
-export default StopwatchControls;
+export default StopwatchTestControls;
