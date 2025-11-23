@@ -1,3 +1,5 @@
+import type { DeepPartial, SubmitHandler } from "react-hook-form";
+
 import {
   Button,
   DialogActions,
@@ -9,9 +11,10 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import { SaveFilled } from "@fluentui/react-icons";
-import { formatTimeToHHMMSS } from "helpers/format-time-to-HHMMSS.ts";
-import { getSecondsFromHHMMSS } from "helpers/get-seconds-from-HHMMSS.ts";
-import { type DeepPartial, type SubmitHandler, useForm } from "react-hook-form";
+import { formatTimeToHHMMSS } from "helpers/format-time-to-hhmmss.ts";
+import { getSecondsFromHHMMSS } from "helpers/get-seconds-from-hhmmss.ts";
+import { useForm } from "react-hook-form";
+
 import TimeField from "../components/time-field.tsx";
 
 interface InternalForm {
@@ -24,23 +27,23 @@ interface ExternalForm {
 
 interface StopwatchEditModalProps {
   defaultValues: DeepPartial<ExternalForm>;
-  values: ExternalForm;
-  onSubmit: (value: ExternalForm["totalDuration"]) => void;
   disabled: boolean;
+  onSubmit: (value: ExternalForm["totalDuration"]) => void;
+  values: ExternalForm;
 }
 
 const useClasses = makeStyles({
   timeField: {
-    width: "100%",
     margin: "10px 0",
+    width: "100%",
   },
 });
 
 function StopwatchEditModal({
   defaultValues,
+  disabled,
   onSubmit,
   values,
-  disabled,
 }: StopwatchEditModalProps) {
   const defaultTotalDuration = formatTimeToHHMMSS(
     defaultValues["totalDuration"] ?? 0,
@@ -49,8 +52,8 @@ function StopwatchEditModal({
   const classes = useClasses();
 
   const form = useForm<InternalForm>({
-    values: { totalDuration: formatTimeToHHMMSS(values.totalDuration) },
     defaultValues: { totalDuration: defaultTotalDuration },
+    values: { totalDuration: formatTimeToHHMMSS(values.totalDuration) },
   });
 
   const submitHandler: SubmitHandler<InternalForm> = (value) => {
@@ -64,23 +67,23 @@ function StopwatchEditModal({
         <DialogTitle>Editar Temporizador</DialogTitle>
         <DialogContent>
           <TimeField
-            disabled={disabled}
-            defaultValue={defaultTotalDuration}
             className={classes.timeField}
             control={form.control}
+            defaultValue={defaultTotalDuration}
+            disabled={disabled}
             name="totalDuration"
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => form.reset()} appearance="secondary">
+          <Button appearance="secondary" onClick={() => form.reset()}>
             Resetar
           </Button>
           <DialogTrigger action="close" disableButtonEnhancement>
             <Button
-              icon={<SaveFilled />}
-              onClick={() => submitHandler(form.getValues())}
-              iconPosition="before"
               appearance="primary"
+              icon={<SaveFilled />}
+              iconPosition="before"
+              onClick={() => submitHandler(form.getValues())}
             >
               Salvar
             </Button>

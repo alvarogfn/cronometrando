@@ -8,7 +8,7 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
-    "typeRoots": ["./types/localbase.d.ts"],
+    "typeRoots": ["./node_modules/vite", "./types/localbase.d.ts"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",

@@ -1,3 +1,6 @@
+import type { Fn } from "helpers/types.ts";
+import type { ReactElement } from "react";
+
 import {
   Button,
   Dialog,
@@ -8,25 +11,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@fluentui/react-components";
-import type { Fn } from "helpers/types.ts";
-import type { ReactElement } from "react";
 
 interface WithConfirmationProps {
-  title: string;
+  children?: ReactElement;
   description: string;
+  disabled?: boolean;
   onCancel?: Fn;
   onConfirm?: Fn;
-  disabled?: boolean;
-  children?: ReactElement;
+  title: string;
 }
 
 function WithConfirmation({
+  children,
+  description,
   disabled = false,
+  onCancel,
   onConfirm,
   title,
-  onCancel,
-  description,
-  children,
 }: WithConfirmationProps) {
   return (
     <Dialog>
@@ -42,12 +43,12 @@ function WithConfirmation({
           <DialogContent>{description}</DialogContent>
           <DialogActions>
             <DialogTrigger disableButtonEnhancement>
-              <Button onClick={() => onConfirm?.()} appearance="primary">
+              <Button appearance="primary" onClick={() => onConfirm?.()}>
                 Sim
               </Button>
             </DialogTrigger>
             <DialogTrigger disableButtonEnhancement>
-              <Button onClick={() => onCancel?.()} appearance="secondary">
+              <Button appearance="secondary" onClick={() => onCancel?.()}>
                 Não
               </Button>
             </DialogTrigger>

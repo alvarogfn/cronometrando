@@ -1,5 +1,6 @@
-import { FluentProvider as FluentInternalProvider, webDarkTheme } from '@fluentui/react-components';
 import type {PropsWithChildren} from "react";
+
+import { FluentProvider as FluentInternalProvider, webDarkTheme } from '@fluentui/react-components';
 
 type FluentProviderProps = PropsWithChildren
 

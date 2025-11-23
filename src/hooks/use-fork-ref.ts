@@ -1,17 +1,19 @@
+import type {MutableRefObject, Ref, RefCallback} from "react";
+
 import {
-  type MutableRefObject,
-  type Ref,
-  type RefCallback,
-  useMemo,
+  
+  
+  
+  useMemo
 } from "react";
 
 const setRef = <T>(
   ref:
-    | MutableRefObject<T | null>
-    | ((instance: T | null) => void)
+    | ((instance: null | T) => void)
+    | MutableRefObject<null | T>
     | null
     | undefined,
-  value: T | null,
+  value: null | T,
 ) => {
   if (typeof ref === "function") ref(value);
   else if (ref) ref.current = value;
@@ -19,7 +21,7 @@ const setRef = <T>(
 
 export const useForkRef = <Instance>(
   ...refs: Array<Ref<Instance> | undefined>
-): RefCallback<Instance> | null => {
+): null | RefCallback<Instance> => {
   /**
    * This will create a new function if the refs passed to this hook change and are all defined.
    * This means react will call the old forkRef with `null` and the new forkRef

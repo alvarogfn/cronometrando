@@ -1,5 +1,6 @@
-import { questionsCollection, testsCollection } from "api/db.ts";
 import type { StopwatchQuestionModel, StopwatchTestModel } from "api/models.ts";
+
+import { questionsCollection, testsCollection } from "api/db.ts";
 import { useStopwatchStore } from "api/store.tsx";
 import { useEffect, useState } from "react";
 
@@ -29,11 +30,11 @@ function useStopwatchPreviousData() {
       setData(data);
     }
 
-    syncDb();
+    syncDb().catch(console.warn);
 
     const unsubscribe = useStopwatchStore.subscribe((state, prevState) => {
       if (state.testId !== prevState.testId) {
-        syncDb();
+        syncDb().catch(console.warn);
       }
     });
 

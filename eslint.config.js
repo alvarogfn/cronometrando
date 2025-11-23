@@ -1,12 +1,14 @@
 import js from "@eslint/js";
+import tsParser from "@typescript-eslint/parser";
 import eslintConfigPrettier from "eslint-config-prettier";
-import { defineFlatConfig } from "eslint-define-config";
-import importX from "eslint-plugin-import-x";
 import "eslint-plugin-only-warn";
+import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
+import importX from "eslint-plugin-import-x";
 import perfectionist from "eslint-plugin-perfectionist";
 import react from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
 import unicorn from "eslint-plugin-unicorn";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tsEslint from "typescript-eslint";
 
@@ -16,7 +18,7 @@ const project = [
   "./tsconfig.app.json",
 ];
 
-export default defineFlatConfig([
+export default defineConfig([
   // global ignores
   {
     ignores: [
@@ -49,9 +51,8 @@ export default defineFlatConfig([
 
   {
     files: ["**/*.ts", "**/*.tsx"],
-
     languageOptions: {
-      parser: tsEslint.parser,
+      parser: tsParser,
       parserOptions: {
         ecmaVersion: "latest",
         project,
@@ -115,14 +116,14 @@ export default defineFlatConfig([
       "import-x/no-unused-modules": "warn",
     },
     settings: {
-      "import/parsers": {
-        "@typescript-eslint/parser": [".ts", ".tsx"],
-      },
-      "import/resolver": {
-        typescript: {
+      "import-x/resolver-next": [
+        createTypeScriptImportResolver({
           alwaysTryTypes: true,
           project,
-        },
+        }),
+      ],
+      "import/parsers": {
+        "@typescript-eslint/parser": [".ts", ".tsx"],
       },
     },
   },

@@ -1,32 +1,34 @@
 import { Button, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { StopFilled, PauseFilled, PlayFilled } from "@fluentui/react-icons";
+
 import type { BaseProps } from "../helpers/base-props.ts";
+
 import WithConfirmation from "./button-with-confirmation.tsx";
 
 const useClasses = makeStyles({
   container: {
     display: "flex",
-    width: "100%",
-    justifyContent: "center",
     gap: "10px",
+    justifyContent: "center",
+    width: "100%",
   },
 });
 
 interface StopwatchTestControlsProps extends BaseProps {
   isPaused: boolean;
-  onStart: () => void;
-  onPlay: () => void;
-  onStop: () => void;
-  onPause: () => void;
   isStarted: boolean;
+  onPause: () => void;
+  onPlay: () => void;
+  onStart: () => void;
+  onStop: () => void;
 }
 
 function StopwatchTestControls({
   isPaused,
-  onStart,
-  onPlay,
   isStarted,
   onPause,
+  onPlay,
+  onStart,
   onStop,
   ...props
 }: StopwatchTestControlsProps) {
@@ -46,25 +48,25 @@ function StopwatchTestControls({
       className={mergeClasses(classes.container, props.className)}
     >
       <Button
-        size="large"
-        shape="circular"
+        icon={<PlayOrPause />}
         onClick={(e) => {
           e.preventDefault();
           action();
         }}
-        icon={<PlayOrPause />}
+        shape="circular"
+        size="large"
       />
       <WithConfirmation
-        title="Confirmar"
         description="Deseja parar o timer?"
         disabled={!isStarted}
         onConfirm={() => onStop()}
+        title="Confirmar"
       >
         <Button
-          size="large"
-          shape="circular"
           disabled={!isStarted}
           icon={<StopFilled />}
+          shape="circular"
+          size="large"
         />
       </WithConfirmation>
     </div>

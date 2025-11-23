@@ -1,7 +1,9 @@
+import type { Fn } from "helpers/types.ts";
+
 import { getCurrentTimestamp } from "helpers/get-current-timestamp.ts";
 import { getFromStorage, setToStorage } from "helpers/storage.ts";
-import type { Fn } from "helpers/types.ts";
 import { create } from "zustand";
+
 import {
   QUESTION_DEFAULT_DURATION,
   QUESTION_STORAGE_KEY_DURATION,
@@ -27,38 +29,44 @@ export interface StoreProps {
 }
 
 export interface StoreState extends StoreProps {
-  start: Fn;
-  stop: Fn;
+  nextQuestion: Fn;
   pause: Fn;
   resume: Fn;
-  tick: Fn;
-  nextQuestion: Fn;
   setQuestionDuration: (newDuration: number) => void;
   setTestDuration: (newDuration: number) => void;
+  start: Fn;
+  stop: Fn;
+  tick: Fn;
 }
 
 export const useStopwatchStore = create<StoreState>((set) => {
   return {
-    questionCountedDuration: 0,
-    testCountedDuration: 0,
-
-    testId: nanoid(),
-    questionId: nanoid(),
-
     createdAt: getCurrentTimestamp(),
+    isPaused: false,
 
     isStarted: false,
-    isPaused: false,
+    nextQuestion: () => {
+      set((state) => {
+        saveQuestionToDb({ ...state });
+
+        return {
+          questionCountedDuration: 0,
+          questionId: nanoid(),
+        };
+      });
+    },
+
+    pause: () => set({ isPaused: true }),
+
+    questionCountedDuration: 0,
+    questionId: nanoid(),
 
     questionTotalDuration: getFromStorage(
       QUESTION_STORAGE_KEY_DURATION,
       QUESTION_DEFAULT_DURATION,
     ),
 
-    testTotalDuration: getFromStorage(
-      TEST_STORAGE_KEY_DURATION,
-      TEST_DEFAULT_DURATION,
-    ),
+    resume: () => set({ isPaused: false }),
 
     setQuestionDuration: (newDuration: number) => {
       set({ questionTotalDuration: newDuration });
@@ -70,33 +78,19 @@ export const useStopwatchStore = create<StoreState>((set) => {
       setToStorage(TEST_STORAGE_KEY_DURATION, newDuration);
     },
 
-    pause: () => set({ isPaused: true }),
-    resume: () => set({ isPaused: false }),
-
-    nextQuestion: () => {
-      set((state) => {
-        saveQuestionToDb({ ...state });
-
-        return {
-          questionCountedDuration: 0,
-          questionId: nanoid(),
-        };
-      });
-    },
     start: () => {
       set((state) => {
         if (state.isStarted)
           throw new Error("The stopwatch has already started");
 
         return {
-          isStarted: true,
-          isPaused: false,
           countedDuration: 0,
           createdAt: getCurrentTimestamp(),
+          isPaused: false,
+          isStarted: true,
         };
       });
     },
-
     stop: () => {
       set((state) => {
         if (!state.isStarted) throw new Error("The stopwatch was not started");
@@ -105,13 +99,21 @@ export const useStopwatchStore = create<StoreState>((set) => {
         return {
           isPaused: false,
           isStarted: false,
-          testId: nanoid(),
+          questionCountedDuration: 0,
           questionId: nanoid(),
           testCountedDuration: 0,
-          questionCountedDuration: 0,
+          testId: nanoid(),
         };
       });
     },
+
+    testCountedDuration: 0,
+    testId: nanoid(),
+
+    testTotalDuration: getFromStorage(
+      TEST_STORAGE_KEY_DURATION,
+      TEST_DEFAULT_DURATION,
+    ),
 
     tick: () => {
       set((state) => {

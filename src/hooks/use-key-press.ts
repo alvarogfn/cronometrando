@@ -9,9 +9,9 @@ function useKeyPress(
       if (event.key === targetKey) action(event);
     };
 
-    window.addEventListener("keydown", downHandler);
+    globalThis.addEventListener("keydown", downHandler);
     return (): void => {
-      window.removeEventListener("keydown", downHandler);
+      globalThis.removeEventListener("keydown", downHandler);
     };
   }, [action, targetKey]);
 }

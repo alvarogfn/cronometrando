@@ -9,7 +9,6 @@ import { TEST_DEFAULT_DURATION } from "api/constants.ts";
 import { useStopwatchStore } from "api/store.tsx";
 
 import StopwatchEditModal from "../components/stopwatch-edit-modal.tsx";
-
 import StopwatchTestControls from "./stopwatch-test-controls.tsx";
 import StopwatchTimer from "./stopwatch-timer.tsx";
 
@@ -19,15 +18,15 @@ interface StopwatchTestProps {
 
 function StopwatchTest({ className }: StopwatchTestProps) {
   const {
-    isStarted,
     isPaused,
-    setTestDuration,
-    testTotalDuration,
-    testCountedDuration,
-    stop,
-    start,
-    resume,
+    isStarted,
     pause,
+    resume,
+    setTestDuration,
+    start,
+    stop,
+    testCountedDuration,
+    testTotalDuration,
   } = useStopwatchStore((state) => state);
 
   const playAction = isStarted ? (isPaused ? resume : pause) : start;
@@ -47,18 +46,18 @@ function StopwatchTest({ className }: StopwatchTestProps) {
           <StopwatchTestControls
             isPaused={isPaused}
             isStarted={isStarted}
+            onPause={pause}
+            onPlay={resume}
             onStart={playAction}
             onStop={stop}
-            onPlay={resume}
-            onPause={pause}
           />
         </Card>
       </DialogTrigger>
       <StopwatchEditModal
-        values={{ totalDuration: testTotalDuration }}
         defaultValues={{ totalDuration: TEST_DEFAULT_DURATION }}
         disabled={isStarted}
         onSubmit={(value) => setTestDuration(value)}
+        values={{ totalDuration: testTotalDuration }}
       />
     </Dialog>
   );

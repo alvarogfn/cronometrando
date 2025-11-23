@@ -1,28 +1,30 @@
 import { makeStyles, mergeClasses, Text } from "@fluentui/react-components";
-import ProgressBar from "../components/progress-bar.tsx";
-import { formatTimeToHHMMSS } from "../helpers/format-time-to-HHMMSS.ts";
+import { formatTimeToHHMMSS } from "helpers/format-time-to-hhmmss.ts";
+
 import type { BaseProps } from "../helpers/base-props.ts";
+
+import ProgressBar from "../components/progress-bar.tsx";
 
 const useStyles = makeStyles({
   container: {
     display: "flex",
   },
   timer: {
-    padding: "15px",
-    display: "flex",
     alignItems: "center",
+    display: "flex",
     justifyContent: "center",
+    padding: "15px",
   },
 });
 
 interface StopwatchTimerProps extends BaseProps {
-  totalDuration: number;
   countedDuration: number;
+  totalDuration: number;
 }
 
 function StopwatchTimer({
-  totalDuration,
   countedDuration,
+  totalDuration,
   ...props
 }: StopwatchTimerProps) {
   const classes = useStyles();
@@ -44,14 +46,14 @@ function StopwatchTimer({
         }}
       >
         <ProgressBar
-          timedOut={timedOut}
           percentage={timedOut ? 1 : percentage}
+          timedOut={timedOut}
         />
         <div className={classes.timer}>
-          <Text size={800} align="center" weight="medium">
+          <Text align="center" size={800} weight="medium">
             {formatTimeToHHMMSS(timedOut ? 0 : totalDuration - countedDuration)}
           </Text>
-          <Text style={{ margin: 3 }} size={300} align="end">
+          <Text align="end" size={300} style={{ margin: 3 }}>
             {timedOut ? ` (+${countedDuration - totalDuration})` : null}
           </Text>
         </div>

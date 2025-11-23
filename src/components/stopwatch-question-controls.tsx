@@ -1,25 +1,26 @@
 import { Button, makeStyles, mergeClasses } from "@fluentui/react-components";
+
 import type { BaseProps } from "../helpers/base-props.ts";
 
 const useClasses = makeStyles({
   container: {
     display: "flex",
-    width: "100%",
-    justifyContent: "center",
     gap: "10px",
+    justifyContent: "center",
+    width: "100%",
   },
 });
 
 interface StopwatchQuestionControlsProps extends BaseProps {
-  onPlay: () => void;
-  onPause: () => void;
-  onNext: () => void;
   disabled: boolean;
+  onNext: () => void;
+  onPause: () => void;
+  onPlay: () => void;
 }
 
 function StopwatchQuestionControls({
-  onNext,
   disabled,
+  onNext,
   ...props
 }: StopwatchQuestionControlsProps) {
   const classes = useClasses();

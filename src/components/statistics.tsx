@@ -7,11 +7,12 @@ import {
   TableHeaderCell,
   Card,
 } from "@fluentui/react-components";
-import { formatSecondsToMMSS } from "helpers/format-seconds-to-MM-SS.ts";
-import { formatTimeToDDMMHHSS } from "helpers/format-time-to-DD-MM-HH-SS.ts";
-import type { BaseProps } from "../helpers/base-props.ts";
-import useStopwatchPreviousData from "hooks/use-stopwatch-previous-data.ts";
+import { formatSecondsToMMSS } from "helpers/format-seconds-to-mmss.ts";
+import { formatTimeToDDMMHHSS } from "helpers/format-time-to-ddmmhhss.ts";
 import { average, highest, lowest } from "helpers/statistics.ts";
+import useStopwatchPreviousData from "hooks/use-stopwatch-previous-data.ts";
+
+import type { BaseProps } from "../helpers/base-props.ts";
 
 const columns = [
   { columnKey: "average", label: "Média / Ques." },

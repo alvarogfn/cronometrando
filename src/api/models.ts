@@ -1,9 +1,9 @@
 export interface StopwatchTestModel {
-  totalDuration: number;
   countedDuration: number;
   createdAt: number;
   endedAt: number;
   id: string;
+  totalDuration: number;
 }
 
 export interface StopwatchQuestionModel

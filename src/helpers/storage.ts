@@ -1,4 +1,4 @@
-export function getFromStorage<T extends string | number>(
+export function getFromStorage<T extends number | string>(
   key: string,
   ifAbsent: T,
 ): T {
@@ -11,7 +11,7 @@ export function getFromStorage<T extends string | number>(
   return loadedItem as T;
 }
 
-export function setToStorage<T extends string | number>(
+export function setToStorage<T extends number | string>(
   key: string,
   value: T,
 ): boolean {

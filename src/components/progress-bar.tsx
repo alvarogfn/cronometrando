@@ -1,5 +1,5 @@
-import { makeStyles, mergeClasses } from "@fluentui/react-components";
-import { tokens } from "@fluentui/react-components";
+import { makeStyles, mergeClasses, tokens  } from "@fluentui/react-components";
+
 import type { BaseProps } from "../helpers/base-props.ts";
 
 const MAX_WIDTH = 100;
@@ -19,22 +19,22 @@ interface ProgressBarProps extends BaseProps {
 const useClasses = makeStyles({
   container: {
     backgroundColor: tokens.colorNeutralBackground6,
+    borderRadius: tokens.borderRadiusLarge,
     height: "20px",
     width: `${MAX_WIDTH}%`,
-    borderRadius: tokens.borderRadiusLarge,
   },
   innerContainer: {
-    borderRadius: tokens.borderRadiusLarge,
     backgroundColor: tokens.colorBrandBackground,
-    width: "100%",
+    borderRadius: tokens.borderRadiusLarge,
     height: "100%",
     transition: "200ms width",
+    width: "100%",
   },
 });
 
 function ProgressBar({
-  percentage,
   className,
+  percentage,
   timedOut = false,
 }: ProgressBarProps) {
   const classes = useClasses();
@@ -46,11 +46,11 @@ function ProgressBar({
   return (
     <div className={mergeClasses(className, classes.container)}>
       <div
+        className={classes.innerContainer}
         style={{
           width: widthWithPercentage(percentage),
           ...style,
         }}
-        className={classes.innerContainer}
       />
     </div>
   );

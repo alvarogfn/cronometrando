@@ -1,91 +1,93 @@
+import type {
+  Control,
+  FieldPathValue,
+  FieldValues,
+  Path,
+} from "react-hook-form";
+
 import { Input } from "@fluentui/react-components";
 import { useEffect } from "react";
-import {
-  type Control,
-  type FieldPathValue,
-  type FieldValues,
-  type Path,
-  useController,
-} from "react-hook-form";
+import { useController } from "react-hook-form";
 import { IMask, useIMask } from "react-imask";
+
 import { useForkRef } from "../hooks/use-fork-ref.ts";
 
 interface TimeFieldProps<Form extends FieldValues> {
+  className?: string;
   control: Control<Form>;
-  name: Path<Form>;
   defaultValue?: FieldPathValue<Form, Path<Form>>;
   disabled?: boolean;
-  className?: string;
+  name: Path<Form>;
 }
 
 const mask = {
-  mask: "HH:MM:SS",
-  lazy: false,
   blocks: {
     HH: {
-      mask: IMask.MaskedRange,
-      placeholderChar: "0",
       from: 0,
-      to: 99,
+      mask: IMask.MaskedRange,
       maxLength: 2,
+      placeholderChar: "0",
+      to: 99,
     },
     MM: {
-      mask: IMask.MaskedRange,
-      placeholderChar: "0",
       from: 0,
-      to: 99,
+      mask: IMask.MaskedRange,
       maxLength: 2,
+      placeholderChar: "0",
+      to: 99,
     },
     SS: {
-      mask: IMask.MaskedRange,
-      placeholderChar: "0",
       from: 0,
-      to: 99,
+      mask: IMask.MaskedRange,
       maxLength: 2,
+      placeholderChar: "0",
+      to: 99,
     },
   },
+  lazy: false,
+  mask: "HH:MM:SS",
 };
 
 function TimeField<Form extends FieldValues>({
+  className,
   control,
-  name,
   defaultValue,
   disabled,
-  className,
+  name,
 }: TimeFieldProps<Form>) {
   const { field } = useController({
     control,
-    name,
     defaultValue,
     disabled,
+    name,
   });
 
   const {
     ref: imaskRef,
-    value,
     setValue,
+    value,
   } = useIMask(mask, {
+    defaultValue: field.value,
     onAccept: (_, mask) => {
       field.onChange(mask.value);
     },
-    defaultValue: field.value,
   });
 
   const inputRef = useForkRef(field.ref, imaskRef);
 
   useEffect(() => {
     setValue(field.value);
-  }, [field.value]);
+  }, [field.value, setValue]);
 
   return (
     <Input
       className={className}
-      size="large"
       disabled={field.disabled}
       name={field.name}
       onBlur={field.onBlur}
-      value={value}
       ref={inputRef}
+      size="large"
+      value={value}
     />
   );
 }

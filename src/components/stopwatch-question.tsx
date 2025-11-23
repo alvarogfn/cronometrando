@@ -7,12 +7,11 @@ import {
 } from "@fluentui/react-components";
 import { QUESTION_DEFAULT_DURATION } from "api/constants.ts";
 import { useStopwatchStore } from "api/store.tsx";
+import useKeyPress from "hooks/use-key-press.ts";
 
 import StopwatchEditModal from "../components/stopwatch-edit-modal.tsx";
-
 import StopwatchQuestionControls from "./stopwatch-question-controls.tsx";
 import StopwatchTimer from "./stopwatch-timer.tsx";
-import useKeyPress from "hooks/use-key-press.ts";
 
 interface StopwatchQuestionProps {
   className?: string;
@@ -21,15 +20,15 @@ interface StopwatchQuestionProps {
 
 function StopwatchQuestion({ className }: StopwatchQuestionProps) {
   const {
-    start,
-    questionTotalDuration,
-    setQuestionDuration,
-    questionCountedDuration,
-    resume,
-    isStarted,
     isPaused,
-    pause,
+    isStarted,
     nextQuestion,
+    pause,
+    questionCountedDuration,
+    questionTotalDuration,
+    resume,
+    setQuestionDuration,
+    start,
   } = useStopwatchStore((state) => state);
 
   const playAction = isStarted ? (isPaused ? resume : pause) : start;
@@ -59,8 +58,8 @@ function StopwatchQuestion({ className }: StopwatchQuestionProps) {
       <StopwatchEditModal
         defaultValues={{ totalDuration: QUESTION_DEFAULT_DURATION }}
         disabled={isStarted}
-        values={{ totalDuration: questionTotalDuration }}
         onSubmit={(value) => setQuestionDuration(value)}
+        values={{ totalDuration: questionTotalDuration }}
       />
     </Dialog>
   );

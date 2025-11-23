@@ -32,9 +32,9 @@ declare module "localbase" {
     add(document: T, customKey?: string): Promise<void>;
 
     /**
-     * Retorna todos os documentos da coleção
+     * Deleta todos os documentos da coleção
      */
-    get(): Promise<T[]>;
+    delete(): Promise<void>;
 
     /**
      * Seleciona um documento específico da coleção
@@ -43,14 +43,9 @@ declare module "localbase" {
     doc(criteria: Partial<T>): Document<T>;
 
     /**
-     * Ordena os documentos por um campo específico
-     * @param field Campo para ordenação
-     * @param direction Direção da ordenação ('asc' ou 'desc')
+     * Retorna todos os documentos da coleção
      */
-    orderBy<K extends keyof T>(
-      field: K,
-      direction?: "asc" | "desc",
-    ): CollectionQuery<T>;
+    get(): Promise<T[]>;
 
     /**
      * Limita o número de documentos retornados
@@ -59,9 +54,14 @@ declare module "localbase" {
     limit(count: number): CollectionQuery<T>;
 
     /**
-     * Deleta todos os documentos da coleção
+     * Ordena os documentos por um campo específico
+     * @param field Campo para ordenação
+     * @param direction Direção da ordenação ('asc' ou 'desc')
      */
-    delete(): Promise<void>;
+    orderBy<K extends keyof T>(
+      field: K,
+      direction?: "asc" | "desc",
+    ): CollectionQuery<T>;
   }
 
   /**
@@ -69,15 +69,14 @@ declare module "localbase" {
    */
   interface Document<T> {
     /**
-     * Retorna o documento
+     * Deleta o documento
      */
-    get(): Promise<T | null>;
+    delete(): Promise<void>;
 
     /**
-     * Atualiza parcialmente o documento
-     * @param updates Campos a serem atualizados
+     * Retorna o documento
      */
-    update(updates: Partial<T>): Promise<void>;
+    get(): Promise<null | T>;
 
     /**
      * Define/substitui completamente o documento
@@ -86,9 +85,10 @@ declare module "localbase" {
     set(document: T): Promise<void>;
 
     /**
-     * Deleta o documento
+     * Atualiza parcialmente o documento
+     * @param updates Campos a serem atualizados
      */
-    delete(): Promise<void>;
+    update(updates: Partial<T>): Promise<void>;
   }
 
   /**
@@ -96,9 +96,20 @@ declare module "localbase" {
    */
   interface CollectionQuery<T> {
     /**
+     * Deleta todos os documentos da query
+     */
+    delete(): Promise<void>;
+
+    /**
      * Retorna os documentos filtrados/ordenados
      */
-    get(): Promise<T[] | null>;
+    get(): Promise<null | T[]>;
+
+    /**
+     * Limita o número de documentos retornados
+     * @param count Número máximo de documentos
+     */
+    limit(count: number): CollectionQuery<T>;
 
     /**
      * Ordena os documentos por um campo específico
@@ -109,16 +120,5 @@ declare module "localbase" {
       field: K,
       direction?: "asc" | "desc",
     ): CollectionQuery<T>;
-
-    /**
-     * Limita o número de documentos retornados
-     * @param count Número máximo de documentos
-     */
-    limit(count: number): CollectionQuery<T>;
-
-    /**
-     * Deleta todos os documentos da query
-     */
-    delete(): Promise<void>;
   }
 }
