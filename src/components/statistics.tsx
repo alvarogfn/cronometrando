@@ -28,7 +28,6 @@ const pickCountedDuration = ({ countedDuration = 0 }) => countedDuration;
 
 function Statistics({ className }: StatisticsProps) {
   const { data } = useStopwatchPreviousData();
-  console.log(data);
 
   if (data.length === 0) {
     return <Card className={className}>Nenhum dado salvo.</Card>;
@@ -59,7 +58,7 @@ function Statistics({ className }: StatisticsProps) {
             );
 
             const questionLowest = lowest(item.questions, pickCountedDuration);
-            console.log(questionLowest);
+
             return (
               <TableRow key={item.id}>
                 <TableCell>{formatSecondsToMMSS(questionAverage)}</TableCell>
