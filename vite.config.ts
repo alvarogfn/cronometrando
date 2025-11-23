@@ -9,7 +9,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           fluentui: ["@fluentui/react-components", "@fluentui/react-icons"],
-          react: ["react", "react-dom"],
         },
       },
     },
