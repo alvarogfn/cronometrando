@@ -1,2 +1,5 @@
-export const TIMER_TIMEOUT = 1000;
-export const TIMER_DEFAULT_DURATION = 3600;
+export const TEST_DEFAULT_DURATION = 9000;
+export const QUESTION_DEFAULT_DURATION = 192;
+
+export const TEST_STORAGE_KEY_DURATION = "testStorageKeyDuration";
+export const QUESTION_STORAGE_KEY_DURATION = "questionStorageKeyDuration";

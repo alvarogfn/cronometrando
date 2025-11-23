@@ -5,49 +5,62 @@ import {
   Dialog,
   DialogTrigger,
 } from "@fluentui/react-components";
+import { QUESTION_DEFAULT_DURATION } from "api/constants.ts";
+import { useStopwatchStore } from "api/store.tsx";
 
 import StopwatchEditModal from "../components/stopwatch-edit-modal.tsx";
 
 import StopwatchQuestionControls from "./stopwatch-question-controls.tsx";
 import StopwatchTimer from "./stopwatch-timer.tsx";
-import merge from "merge";
+import useKeyPress from "hooks/use-key-press.ts";
 
 interface StopwatchQuestionProps {
   className?: string;
   parentId?: string;
 }
 
-const defaultValues = {
-  countedDuration: 0,
-  totalDuration: 180,
-  isStarted: false,
-  id: "0",
-};
-
 function StopwatchQuestion({ className }: StopwatchQuestionProps) {
-  const values = merge(defaultValues, {});
+  const {
+    start,
+    questionTotalDuration,
+    setQuestionDuration,
+    questionCountedDuration,
+    resume,
+    isStarted,
+    isPaused,
+    pause,
+    nextQuestion,
+  } = useStopwatchStore((state) => state);
+
+  const playAction = isStarted ? (isPaused ? resume : pause) : start;
+
+  useKeyPress("k", nextQuestion);
 
   return (
     <Dialog>
-      <DialogTrigger disableButtonEnhancement>
+      <DialogTrigger
+        action={isStarted ? "close" : "open"}
+        disableButtonEnhancement
+      >
         <Card appearance="filled" className={className}>
           <CardHeader header={<Subtitle1>Questão</Subtitle1>} />
           <StopwatchTimer
-            countedDuration={values.countedDuration}
-            totalDuration={values.totalDuration}
+            countedDuration={questionCountedDuration}
+            totalDuration={questionTotalDuration}
           />
           <StopwatchQuestionControls
-            isPaused={false}
-            onPause={() => ({ isPaused: true })}
-            onPlay={() => ({ isPaused: false })}
-            onComplete={() => ({ isPaused: false })}
+            disabled={!isStarted}
+            onNext={nextQuestion}
+            onPause={pause}
+            onPlay={playAction}
           />
         </Card>
       </DialogTrigger>
       <StopwatchEditModal
-        values={values}
-        defaultValues={values}
-        onSubmit={(value) => console.log(value)}
+        defaultValues={{ totalDuration: QUESTION_DEFAULT_DURATION }}
+        disabled={isStarted}
+        values={{ totalDuration: questionTotalDuration }}
+        onSubmit={(value) => setQuestionDuration(value)}
       />
     </Dialog>
   );

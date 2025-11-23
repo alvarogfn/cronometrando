@@ -11,23 +11,18 @@ const useClasses = makeStyles({
 });
 
 interface StopwatchQuestionControlsProps extends BaseProps {
-  isPaused: boolean;
   onPlay: () => void;
   onPause: () => void;
-  onComplete: () => void;
+  onNext: () => void;
+  disabled: boolean;
 }
 
 function StopwatchQuestionControls({
-  isPaused,
-  onComplete,
-  onPause,
-  onPlay,
+  onNext,
+  disabled,
   ...props
 }: StopwatchQuestionControlsProps) {
   const classes = useClasses();
-
-  const toggle = isPaused ? onPause : onPlay;
-  const toggleText = isPaused ? "Pausar" : "Continuar";
 
   return (
     <div
@@ -35,19 +30,10 @@ function StopwatchQuestionControls({
       className={mergeClasses(classes.container, props.className)}
     >
       <Button
+        disabled={disabled}
         onClick={(e) => {
           e.preventDefault();
-          toggle();
-        }}
-        size="large"
-        appearance="primary"
-      >
-        {toggleText}
-      </Button>
-      <Button
-        onClick={(e) => {
-          e.preventDefault();
-          onComplete();
+          onNext();
         }}
         size="large"
       >

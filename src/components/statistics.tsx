@@ -7,22 +7,31 @@ import {
   TableHeaderCell,
   Card,
 } from "@fluentui/react-components";
+import { formatSecondsToMMSS } from "helpers/format-seconds-to-MM-SS.ts";
+import { formatTimeToDDMMHHSS } from "helpers/format-time-to-DD-MM-HH-SS.ts";
 import type { BaseProps } from "../helpers/base-props.ts";
-import useTestFindAll from "hooks/use-test-find-all.ts";
+import useStopwatchPreviousData from "hooks/use-stopwatch-previous-data.ts";
+import { average, highest, lowest } from "helpers/statistics.ts";
 
 const columns = [
-  { columnKey: "id", label: "ID" },
-  { columnKey: "average", label: "Média" },
-  { columnKey: "longerTime", label: "Maior duração" },
-  { columnKey: "shorterTime", label: "Menor duração" },
-  { columnKey: "quantity", label: "Quantidade" },
+  { columnKey: "average", label: "Média / Ques." },
+  { columnKey: "longerTime", label: "Maior tempo / Ques." },
+  { columnKey: "shorterTime", label: "Menor tempo / Ques." },
+  { columnKey: "quantity", label: "Resolvidas / Prova" },
   { columnKey: "date", label: "Dia e Hora" },
 ];
 
 interface StatisticsProps extends BaseProps {}
 
+const pickCountedDuration = ({ countedDuration = 0 }) => countedDuration;
+
 function Statistics({ className }: StatisticsProps) {
-  const { data, isLoading } = useTestFindAll();
+  const { data } = useStopwatchPreviousData();
+  console.log(data);
+
+  if (data.length === 0) {
+    return <Card className={className}>Nenhum dado salvo.</Card>;
+  }
 
   return (
     <Card className={className}>
@@ -37,18 +46,29 @@ function Statistics({ className }: StatisticsProps) {
           </TableRow>
         </TableHeader>
         <TableBody style={{ maxHeight: 100 }}>
-          {data.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>#{item.id}</TableCell>
-              <TableCell>null</TableCell>
-              <TableCell>null</TableCell>
-              <TableCell>null</TableCell>
-              <TableCell>null</TableCell>
-              <TableCell>
-                {new Date(item.endedAt).toLocaleDateString()}
-              </TableCell>
-            </TableRow>
-          ))}
+          {data.map((item) => {
+            const questionAverage = average(
+              item.questions,
+              pickCountedDuration,
+            );
+
+            const questionHightest = highest(
+              item.questions,
+              pickCountedDuration,
+            );
+
+            const questionLowest = lowest(item.questions, pickCountedDuration);
+            console.log(questionLowest);
+            return (
+              <TableRow key={item.id}>
+                <TableCell>{formatSecondsToMMSS(questionAverage)}</TableCell>
+                <TableCell>{formatSecondsToMMSS(questionHightest)}</TableCell>
+                <TableCell>{formatSecondsToMMSS(questionLowest)}</TableCell>
+                <TableCell>{item.questions.length}</TableCell>
+                <TableCell>{formatTimeToDDMMHHSS(item.endedAt)}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </Card>

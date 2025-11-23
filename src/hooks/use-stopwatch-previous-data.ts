@@ -1,27 +1,21 @@
 import { questionsCollection, testsCollection } from "api/db.ts";
 import type { StopwatchQuestionModel, StopwatchTestModel } from "api/models.ts";
-import { useTestStore } from "api/test-store.ts";
+import { useStopwatchStore } from "api/store.tsx";
 import { useEffect, useState } from "react";
 
 type TestWithQuestions = (StopwatchTestModel & {
   questions: StopwatchQuestionModel[];
 })[];
 
-function useTestFindAll() {
+function useStopwatchPreviousData() {
   const [data, setData] = useState<TestWithQuestions>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const isRunning = useTestStore((state) => state.isRunning);
 
   useEffect(() => {
-    async function findAll() {
-      setIsLoading(true);
-
+    async function syncDb() {
       const [tests, questions] = await Promise.all([
-        testsCollection().get(),
-        questionsCollection().orderBy("endedAt", "asc").get(),
+        testsCollection().orderBy("endedAt", "desc").limit(5).get(),
+        questionsCollection().orderBy("endedAt", "desc").get(),
       ]);
-
-      console.log(tests);
 
       const data = (tests ?? []).map((test) => {
         return {
@@ -35,10 +29,18 @@ function useTestFindAll() {
       setData(data);
     }
 
-    findAll().then(() => setIsLoading(false));
-  }, [isRunning]);
+    syncDb();
 
-  return { data, isLoading };
+    const unsubscribe = useStopwatchStore.subscribe((state, prevState) => {
+      if (state.testId !== prevState.testId) {
+        syncDb();
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return { data };
 }
 
-export default useTestFindAll;
+export default useStopwatchPreviousData;

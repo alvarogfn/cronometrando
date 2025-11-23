@@ -5,8 +5,8 @@ import {
   Dialog,
   DialogTrigger,
 } from "@fluentui/react-components";
-import { useTestStore } from "api/test-store.ts";
-import { formatTimeToHHMMSS } from "helpers/format-time-to-HHMMSS.ts";
+import { TEST_DEFAULT_DURATION } from "api/constants.ts";
+import { useStopwatchStore } from "api/store.tsx";
 
 import StopwatchEditModal from "../components/stopwatch-edit-modal.tsx";
 
@@ -17,38 +17,37 @@ interface StopwatchTestProps {
   className?: string;
 }
 
-const defaultValues = {
-  totalDuration: 36000,
-};
-
 function StopwatchTest({ className }: StopwatchTestProps) {
   const {
-    start,
-    isRunning,
-    pause,
+    isStarted,
     isPaused,
-    resume,
-    totalDuration,
-    countedDuration,
+    setTestDuration,
+    testTotalDuration,
+    testCountedDuration,
     stop,
-  } = useTestStore((state) => state);
+    start,
+    resume,
+    pause,
+  } = useStopwatchStore((state) => state);
+
+  const playAction = isStarted ? (isPaused ? resume : pause) : start;
 
   return (
     <Dialog>
       <DialogTrigger
-        action={isRunning ? "close" : "open"}
+        action={isStarted ? "close" : "open"}
         disableButtonEnhancement
       >
         <Card appearance="filled" className={className}>
           <CardHeader header={<Subtitle1>Prova</Subtitle1>} />
           <StopwatchTimer
-            countedDuration={countedDuration}
-            totalDuration={totalDuration}
+            countedDuration={testCountedDuration}
+            totalDuration={testTotalDuration}
           />
           <StopwatchTestControls
             isPaused={isPaused}
-            isRunning={isRunning}
-            onStart={() => start(totalDuration)}
+            isStarted={isStarted}
+            onStart={playAction}
             onStop={stop}
             onPlay={resume}
             onPause={pause}
@@ -56,12 +55,10 @@ function StopwatchTest({ className }: StopwatchTestProps) {
         </Card>
       </DialogTrigger>
       <StopwatchEditModal
-        values={{ totalDuration }}
-        disabled={isRunning}
-        defaultValues={{ totalDuration: defaultValues.totalDuration }}
-        onSubmit={(value) =>
-          console.log(formatTimeToHHMMSS(value.totalDuration))
-        }
+        values={{ totalDuration: testTotalDuration }}
+        defaultValues={{ totalDuration: TEST_DEFAULT_DURATION }}
+        disabled={isStarted}
+        onSubmit={(value) => setTestDuration(value)}
       />
     </Dialog>
   );

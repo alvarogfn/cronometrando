@@ -1,4 +1,5 @@
 import { Input } from "@fluentui/react-components";
+import { useEffect } from "react";
 import {
   type Control,
   type FieldPathValue,
@@ -17,6 +18,34 @@ interface TimeFieldProps<Form extends FieldValues> {
   className?: string;
 }
 
+const mask = {
+  mask: "HH:MM:SS",
+  lazy: false,
+  blocks: {
+    HH: {
+      mask: IMask.MaskedRange,
+      placeholderChar: "0",
+      from: 0,
+      to: 99,
+      maxLength: 2,
+    },
+    MM: {
+      mask: IMask.MaskedRange,
+      placeholderChar: "0",
+      from: 0,
+      to: 99,
+      maxLength: 2,
+    },
+    SS: {
+      mask: IMask.MaskedRange,
+      placeholderChar: "0",
+      from: 0,
+      to: 99,
+      maxLength: 2,
+    },
+  },
+};
+
 function TimeField<Form extends FieldValues>({
   control,
   name,
@@ -31,43 +60,22 @@ function TimeField<Form extends FieldValues>({
     disabled,
   });
 
-  const { ref: imaskRef, value } = useIMask(
-    {
-      mask: "HH:MM:SS",
-      lazy: false,
-      blocks: {
-        HH: {
-          mask: IMask.MaskedRange,
-          placeholderChar: "0",
-          from: 0,
-          to: 99,
-          maxLength: 2,
-        },
-        MM: {
-          mask: IMask.MaskedRange,
-          placeholderChar: "0",
-          from: 0,
-          to: 99,
-          maxLength: 2,
-        },
-        SS: {
-          mask: IMask.MaskedRange,
-          placeholderChar: "0",
-          from: 0,
-          to: 99,
-          maxLength: 2,
-        },
-      },
+  const {
+    ref: imaskRef,
+    value,
+    setValue,
+  } = useIMask(mask, {
+    onAccept: (_, mask) => {
+      field.onChange(mask.value);
     },
-    {
-      onAccept: (_, mask) => {
-        field.onChange(mask.value);
-      },
-      defaultValue: field.value,
-    },
-  );
+    defaultValue: field.value,
+  });
 
   const inputRef = useForkRef(field.ref, imaskRef);
+
+  useEffect(() => {
+    setValue(field.value);
+  }, [field.value]);
 
   return (
     <Input

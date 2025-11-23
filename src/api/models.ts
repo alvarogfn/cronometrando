@@ -1,11 +1,12 @@
 export interface StopwatchTestModel {
   totalDuration: number;
   countedDuration: number;
-  startAt: number;
+  createdAt: number;
   endedAt: number;
   id: string;
 }
 
-export interface StopwatchQuestionModel extends StopwatchTestModel {
+export interface StopwatchQuestionModel
+  extends Omit<StopwatchTestModel, "createdAt"> {
   parentId: string;
 }

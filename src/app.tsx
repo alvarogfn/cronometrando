@@ -18,6 +18,8 @@ const useClasses = makeStyles({
     maxWidth: "1000px",
     display: "grid",
     gridTemplateAreas: "'a a b' 'a a b' 'c c c'",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    gridTemplateRows: "100px 100px 100px",
     margin: "0 auto",
     width: "100%",
     flexFlow: "column wrap",
@@ -32,6 +34,9 @@ const useClasses = makeStyles({
   },
   statistics: {
     gridArea: "c",
+  },
+  config: {
+    gridArea: "d",
   },
   gridItem: {
     width: "100%",

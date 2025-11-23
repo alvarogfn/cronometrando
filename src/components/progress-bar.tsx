@@ -13,7 +13,7 @@ function widthWithPercentage(percentage: number) {
 
 interface ProgressBarProps extends BaseProps {
   percentage: number;
-  variant?: "normal" | "warn";
+  timedOut?: boolean;
 }
 
 const useClasses = makeStyles({
@@ -35,14 +35,13 @@ const useClasses = makeStyles({
 function ProgressBar({
   percentage,
   className,
-  variant = "normal",
+  timedOut = false,
 }: ProgressBarProps) {
   const classes = useClasses();
 
-  const style =
-    variant === "warn"
-      ? { backgroundColor: tokens.colorPaletteRedBackground3 }
-      : {};
+  const style = timedOut
+    ? { backgroundColor: tokens.colorPaletteRedBackground3 }
+    : {};
 
   return (
     <div className={mergeClasses(className, classes.container)}>

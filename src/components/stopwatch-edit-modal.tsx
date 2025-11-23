@@ -25,7 +25,7 @@ interface ExternalForm {
 interface StopwatchEditModalProps {
   defaultValues: DeepPartial<ExternalForm>;
   values: ExternalForm;
-  onSubmit: (value: ExternalForm) => void;
+  onSubmit: (value: ExternalForm["totalDuration"]) => void;
   disabled: boolean;
 }
 
@@ -42,18 +42,20 @@ function StopwatchEditModal({
   values,
   disabled,
 }: StopwatchEditModalProps) {
-  const totalDuration = formatTimeToHHMMSS(defaultValues["totalDuration"] ?? 0);
+  const defaultTotalDuration = formatTimeToHHMMSS(
+    defaultValues["totalDuration"] ?? 0,
+  );
 
   const classes = useClasses();
 
   const form = useForm<InternalForm>({
     values: { totalDuration: formatTimeToHHMMSS(values.totalDuration) },
-    defaultValues: { totalDuration },
+    defaultValues: { totalDuration: defaultTotalDuration },
   });
 
   const submitHandler: SubmitHandler<InternalForm> = (value) => {
     const totalDuration = getSecondsFromHHMMSS(value.totalDuration);
-    onSubmit({ totalDuration });
+    onSubmit(totalDuration);
   };
 
   return (
@@ -63,26 +65,24 @@ function StopwatchEditModal({
         <DialogContent>
           <TimeField
             disabled={disabled}
+            defaultValue={defaultTotalDuration}
             className={classes.timeField}
-            defaultValue={totalDuration}
             control={form.control}
             name="totalDuration"
           />
         </DialogContent>
         <DialogActions>
-          <DialogTrigger disableButtonEnhancement>
+          <Button onClick={() => form.reset()} appearance="secondary">
+            Resetar
+          </Button>
+          <DialogTrigger action="close" disableButtonEnhancement>
             <Button
               icon={<SaveFilled />}
-              onClick={form.handleSubmit(submitHandler)}
+              onClick={() => submitHandler(form.getValues())}
               iconPosition="before"
               appearance="primary"
             >
               Salvar
-            </Button>
-          </DialogTrigger>
-          <DialogTrigger disableButtonEnhancement>
-            <Button onClick={() => form.reset()} appearance="secondary">
-              Cancelar
             </Button>
           </DialogTrigger>
         </DialogActions>
