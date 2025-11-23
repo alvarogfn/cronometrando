@@ -4,11 +4,11 @@ inputs:
   NODE_VERSION:
     description: 'The version of Node.js to use'
     required: true
-    default: '20.x'
+    default: '22.x'
   PNPM_VERSION:
     description: 'The version of PNPM to use'
     required: true
-    default: '8.x'
+    default: '10.x'
 runs:
   using: composite
   steps:
@@ -42,7 +42,3 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-
-    - name: Prisma
-      shell: bash
-      run: pnpm dlx prisma generate
