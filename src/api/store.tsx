@@ -16,6 +16,9 @@ import { tickEmitter } from "./tick-emitter.ts";
 
 export interface StoreProps {
   createdAt: number;
+
+  id: string;
+
   isPaused: boolean;
   isStarted: boolean;
 
@@ -42,6 +45,8 @@ export interface StoreState extends StoreProps {
 export const useStopwatchStore = create<StoreState>((set) => {
   return {
     createdAt: getCurrentTimestamp(),
+    id: nanoid(),
+
     isPaused: false,
 
     isStarted: false,
@@ -91,17 +96,21 @@ export const useStopwatchStore = create<StoreState>((set) => {
         };
       });
     },
+
     stop: () => {
       set((state) => {
         if (!state.isStarted) throw new Error("The stopwatch was not started");
         saveTestToDb({ ...state });
 
         return {
+          id: nanoid(),
+
           isPaused: false,
           isStarted: false,
           questionCountedDuration: 0,
           questionId: nanoid(),
           testCountedDuration: 0,
+
           testId: nanoid(),
         };
       });

@@ -1,24 +1,27 @@
-import type { StopwatchQuestionModel, StopwatchTestModel } from "api/models.ts";
+import type { TestWithQuestions } from "api/models.ts";
 
 import { questionsCollection, testsCollection } from "api/db.ts";
 import { useStopwatchStore } from "api/store.tsx";
 import { useEffect, useState } from "react";
 
-type TestWithQuestions = (StopwatchTestModel & {
-  questions: StopwatchQuestionModel[];
-})[];
+function sleep(timeout: number): Promise<void> {
+  return new Promise<void>((resolves) => setTimeout(() => resolves(), timeout));
+}
 
 function useStopwatchPreviousData() {
-  const [data, setData] = useState<TestWithQuestions>([]);
+  const [data, setData] = useState<TestWithQuestions[]>([]);
 
   useEffect(() => {
     async function syncDb() {
+      // Workaround so that the addition within indexeddb does not take longer than the search.
+      await sleep(500);
+
       const [tests, questions] = await Promise.all([
-        testsCollection().orderBy("endedAt", "desc").limit(5).get(),
+        testsCollection().orderBy("endedAt", "desc").get(),
         questionsCollection().orderBy("endedAt", "desc").get(),
       ]);
 
-      const data = (tests ?? []).map((test) => {
+      return (tests ?? []).map((test) => {
         return {
           ...test,
           questions: (questions ?? []).filter(
@@ -26,17 +29,19 @@ function useStopwatchPreviousData() {
           ),
         };
       });
-
-      setData(data);
     }
-
-    syncDb().catch(console.warn);
 
     const unsubscribe = useStopwatchStore.subscribe((state, prevState) => {
       if (state.testId !== prevState.testId) {
-        syncDb().catch(console.warn);
+        syncDb()
+          .then((r) => setData(r))
+          .catch(console.warn);
       }
     });
+
+    syncDb()
+      .then((r) => setData(r))
+      .catch(console.warn);
 
     return () => unsubscribe();
   }, []);
