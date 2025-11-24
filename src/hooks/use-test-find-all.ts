@@ -8,13 +8,13 @@ function sleep(timeout: number): Promise<void> {
   return new Promise<void>((resolves) => setTimeout(() => resolves(), timeout));
 }
 
-function useStopwatchPreviousData() {
+function useTestFindAll() {
   const [data, setData] = useState<TestWithQuestions[]>([]);
 
   useEffect(() => {
     async function syncDb() {
       // Workaround so that the addition within indexeddb does not take longer than the search.
-      await sleep(500);
+      await sleep(300);
 
       const [tests, questions] = await Promise.all([
         testsCollection().orderBy("endedAt", "desc").get(),
@@ -32,7 +32,7 @@ function useStopwatchPreviousData() {
     }
 
     const unsubscribe = useStopwatchStore.subscribe((state, prevState) => {
-      if (state.testId !== prevState.testId) {
+      if (state.id !== prevState.id) {
         syncDb()
           .then((r) => setData(r))
           .catch(console.warn);
@@ -49,4 +49,4 @@ function useStopwatchPreviousData() {
   return { data };
 }
 
-export default useStopwatchPreviousData;
+export default useTestFindAll;

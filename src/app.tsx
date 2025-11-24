@@ -1,6 +1,6 @@
 import { makeStyles } from "@fluentui/react-components";
 
-import Statistics from "./components/statistics.tsx";
+import StatisticsTable from "components/statistics-table.tsx";
 import QuestionStopwatch from "./components/stopwatch-question.tsx";
 import StopwatchTest from "./components/stopwatch-test.tsx";
 import FluentProvider from "./providers/fluent-provider.tsx";
@@ -15,7 +15,7 @@ const useClasses = makeStyles({
     gap: "10px",
     gridTemplateAreas: "'a a b' 'a a b' 'c c c'",
     gridTemplateColumns: "1fr 1fr 1fr",
-    gridTemplateRows: "100px 100px 100px",
+    gridTemplateRows: "100px 100px 1fr",
     margin: "0 auto",
     maxWidth: "1000px",
     width: "100%",
@@ -58,7 +58,7 @@ function App() {
             <StopwatchTest className={classes.gridItem} />
           </div>
           <div className={classes.statistics}>
-            <Statistics className={classes.statistics} />
+            <StatisticsTable className={classes.statistics} />
           </div>
         </div>
       </div>

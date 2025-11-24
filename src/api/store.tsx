@@ -40,6 +40,7 @@ export interface StoreState extends StoreProps {
   start: Fn;
   stop: Fn;
   tick: Fn;
+  refresh: Fn;
 }
 
 export const useStopwatchStore = create<StoreState>((set) => {
@@ -96,7 +97,6 @@ export const useStopwatchStore = create<StoreState>((set) => {
         };
       });
     },
-
     stop: () => {
       set((state) => {
         if (!state.isStarted) throw new Error("The stopwatch was not started");
@@ -104,13 +104,11 @@ export const useStopwatchStore = create<StoreState>((set) => {
 
         return {
           id: nanoid(),
-
           isPaused: false,
           isStarted: false,
           questionCountedDuration: 0,
           questionId: nanoid(),
           testCountedDuration: 0,
-
           testId: nanoid(),
         };
       });
@@ -123,7 +121,7 @@ export const useStopwatchStore = create<StoreState>((set) => {
       TEST_STORAGE_KEY_DURATION,
       TEST_DEFAULT_DURATION,
     ),
-
+    refresh: () => set({ id: nanoid() }),
     tick: () => {
       set((state) => {
         if (!state.isStarted || state.isPaused) return state;

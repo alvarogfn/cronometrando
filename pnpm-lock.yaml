@@ -20,12 +20,12 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      deepmerge:
+        specifier: 4.3.1
+        version: 4.3.1
       localbase:
         specifier: 0.7.7
         version: 0.7.7
-      merge:
-        specifier: ^2.1.1
-        version: 2.1.1
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
@@ -47,9 +47,6 @@ importers:
       react-virtuoso:
         specifier: 4.14.1
         version: 4.14.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      vite-tsconfig-paths:
-        specifier: 5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.2.4(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2))
       zustand:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@19.2.2)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0))
@@ -144,6 +141,9 @@ importers:
       vite:
         specifier: 7.2.4
         version: 7.2.4(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)
+      vite-tsconfig-paths:
+        specifier: 5.1.4
+        version: 5.1.4(typescript@5.9.3)(vite@7.2.4(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2))
 
 packages:
 
@@ -1826,6 +1826,10 @@ packages:
 
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+
+  deepmerge@4.3.1:
+    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+    engines: {node: '>=0.10.0'}
 
   defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
@@ -5906,6 +5910,8 @@ snapshots:
   dedent@0.7.0: {}
 
   deep-is@0.1.4: {}
+
+  deepmerge@4.3.1: {}
 
   defaults@1.0.4:
     dependencies:

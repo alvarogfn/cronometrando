@@ -1,30 +1,60 @@
-import type { TestWithQuestions } from "api/models.ts";
-import type { ChartData, ChartOptions } from "chart.js";
-
-import { webDarkTheme } from "@fluentui/react-components";
+import type { StopwatchQuestionModel } from "api/models.ts";
+import type { ChartOptions } from "chart.js";
 import type { ChartProps } from "react-chartjs-2";
 
-export function buildQuestionChartData(
-  data: TestWithQuestions,
+import { webDarkTheme } from "@fluentui/react-components";
+import merge from "deepmerge";
+
+import { formatSecondsToMMSS } from "./format-seconds-to-mmss.ts";
+import { highest } from "./statistics-helpers.ts";
+
+const baseStyles: ChartOptions["scales"] = {
+  x: {
+    border: { color: "#FFFFFF50" },
+    grid: { color: "#FFFFFF50" },
+    ticks: { color: "white" },
+  },
+  y: {
+    grid: { color: "#FFFFFF50" },
+    ticks: { color: "white" },
+  },
+};
+
+export function buildQuestionChartParams(
+  questions: StopwatchQuestionModel[],
 ): Pick<ChartProps<"line">, "data" | "options"> {
-  const { questions } = data;
+  const maxDuration = highest(
+    questions,
+    ({ countedDuration }) => countedDuration,
+  );
 
   return {
     data: {
       datasets: [
         {
-          data: [1, 2, 3],
-          xAxisID: "xAxis",
-          yAxisID: "yAxis",
+          backgroundColor: webDarkTheme.colorBrandBackground2,
+          borderColor: webDarkTheme.colorBrandBackground,
+          data: questions.map((question) => question.countedDuration),
+          xAxisID: "x",
+          yAxisID: "y",
         },
       ],
-      // labels: questions.map((_, index) => index + 1),
+      labels: questions.map((_, index) => index + 1),
     },
     options: {
-      scales: {
-        xAxis: { axis: "x", labels: ["x", "y", "z"] },
-        yAxis: { axis: "y", labels: ["a", "b", "c"] },
-      },
+      scales: merge<ChartOptions<"line">["scales"]>(
+        {
+          y: {
+            axis: "y",
+            beginAtZero: true,
+            max: maxDuration * 2,
+            ticks: {
+              callback: (value) => formatSecondsToMMSS(value as number),
+            },
+          },
+        },
+        { ...baseStyles } as any,
+      ),
     },
   };
 }

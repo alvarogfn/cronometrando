@@ -10,3 +10,7 @@ export interface StopwatchQuestionModel
   extends Omit<StopwatchTestModel, "createdAt"> {
   parentId: string;
 }
+
+export interface TestWithQuestions extends StopwatchTestModel {
+  questions: StopwatchQuestionModel[];
+}
