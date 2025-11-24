@@ -19,6 +19,7 @@ const columns = [
   { columnKey: "longerTime", label: "Maior tempo / Ques." },
   { columnKey: "shorterTime", label: "Menor tempo / Ques." },
   { columnKey: "quantity", label: "Resolvidas / Prova" },
+  { columnKey: "testDuration", label: "Duração / Prova" },
   { columnKey: "date", label: "Dia e Hora" },
 ];
 
@@ -65,6 +66,7 @@ function Statistics({ className }: StatisticsProps) {
                 <TableCell>{formatSecondsToMMSS(questionHightest)}</TableCell>
                 <TableCell>{formatSecondsToMMSS(questionLowest)}</TableCell>
                 <TableCell>{item.questions.length}</TableCell>
+                <TableCell>{formatSecondsToMMSS(item.totalDuration)}</TableCell>
                 <TableCell>{formatTimeToDDMMHHSS(item.endedAt)}</TableCell>
               </TableRow>
             );
