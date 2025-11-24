@@ -21,16 +21,6 @@ export function saveTestToDb(state: StoreState) {
       totalDuration: state.testTotalDuration,
     })
     .catch(console.warn);
-
-  questionsCollection()
-    .add({
-      countedDuration: state.questionCountedDuration,
-      endedAt: getCurrentTimestamp(),
-      id: state.questionId,
-      parentId: state.testId,
-      totalDuration: state.questionTotalDuration,
-    })
-    .catch(console.warn);
 }
 
 export function saveQuestionToDb(state: StoreState) {
