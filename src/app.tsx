@@ -4,16 +4,17 @@ import StatisticsTable from "components/statistics-table.tsx";
 import QuestionStopwatch from "./components/stopwatch-question.tsx";
 import StopwatchTest from "./components/stopwatch-test.tsx";
 import FluentProvider from "./providers/fluent-provider.tsx";
+import ConfigurationMenu from "components/configuration-menu.tsx";
 
 const useClasses = makeStyles({
   config: {
-    gridArea: "d",
+    gridArea: "c",
   },
   container: {
     display: "grid",
     flexFlow: "column wrap",
     gap: "10px",
-    gridTemplateAreas: "'a a b' 'a a b' 'c c c'",
+    gridTemplateAreas: "'a a b' 'a a b' 'c c c' 'd d d'",
     gridTemplateColumns: "1fr 1fr 1fr",
     gridTemplateRows: "100px 100px 1fr",
     margin: "0 auto",
@@ -37,7 +38,7 @@ const useClasses = makeStyles({
     width: "100vw",
   },
   statistics: {
-    gridArea: "c",
+    gridArea: "d",
   },
   testStopwatch: {
     flexGrow: 1,
@@ -58,7 +59,10 @@ function App() {
             <StopwatchTest className={classes.gridItem} />
           </div>
           <div className={classes.statistics}>
-            <StatisticsTable className={classes.statistics} />
+            <StatisticsTable className={classes.gridItem} />
+          </div>
+          <div className={classes.config}>
+            <ConfigurationMenu className={classes.gridItem} />
           </div>
         </div>
       </div>

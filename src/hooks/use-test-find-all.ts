@@ -1,7 +1,7 @@
 import type { TestWithQuestions } from "api/models.ts";
 
 import { questionsCollection, testsCollection } from "api/db.ts";
-import { useStopwatchStore } from "api/store.tsx";
+import { useStopwatchStore } from "api/store.ts";
 import { useEffect, useState } from "react";
 
 function sleep(timeout: number): Promise<void> {

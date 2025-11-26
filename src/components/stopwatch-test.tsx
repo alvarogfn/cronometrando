@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from "@fluentui/react-components";
 import { TEST_DEFAULT_DURATION } from "api/constants.ts";
-import { useStopwatchStore } from "api/store.tsx";
+import { useStopwatchStore } from "api/store.ts";
 
 import StopwatchEditModal from "../components/stopwatch-edit-modal.tsx";
 import StopwatchTestControls from "./stopwatch-test-controls.tsx";

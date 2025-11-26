@@ -103,7 +103,7 @@ function StatisticsTable({ className }: StatisticsTableProps) {
               <TableCell>{formatSecondsToMMSS(questionHightest)}</TableCell>
               <TableCell>{formatSecondsToMMSS(questionLowest)}</TableCell>
               <TableCell>{item.questions.length}</TableCell>
-              <TableCell>{formatSecondsToMMSS(item.totalDuration)}</TableCell>
+              <TableCell>{formatSecondsToMMSS(item.countedDuration)}</TableCell>
               <TableCell>{formatTimeToDDMMHHSS(item.endedAt)}</TableCell>
             </>
           );

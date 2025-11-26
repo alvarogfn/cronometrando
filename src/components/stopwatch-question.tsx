@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from "@fluentui/react-components";
 import { QUESTION_DEFAULT_DURATION } from "api/constants.ts";
-import { useStopwatchStore } from "api/store.tsx";
+import { useStopwatchStore } from "api/store.ts";
 import useKeyPress from "hooks/use-key-press.ts";
 
 import StopwatchEditModal from "../components/stopwatch-edit-modal.tsx";

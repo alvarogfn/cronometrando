@@ -1,5 +1,5 @@
 import { testsCollection } from "api/db.ts";
-import { useStopwatchStore } from "api/store.tsx";
+import { useStopwatchStore } from "api/store.ts";
 import { useCallback } from "react";
 
 export function useTestDelete(id: string) {

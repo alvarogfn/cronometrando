@@ -1,6 +1,7 @@
-export function getFromStorage<T extends number | string>(
+export function getFromStorage<T extends boolean | number | string>(
   key: string,
   ifAbsent: T,
+  coerce?: (...args: any[]) => T,
 ): T {
   const loadedItem = localStorage.getItem(key);
 
@@ -8,10 +9,12 @@ export function getFromStorage<T extends number | string>(
     return ifAbsent;
   }
 
+  if (coerce) return coerce(loadedItem);
+
   return loadedItem as T;
 }
 
-export function setToStorage<T extends number | string>(
+export function setToStorage<T extends boolean | number | string>(
   key: string,
   value: T,
 ): boolean {

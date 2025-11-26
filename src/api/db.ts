@@ -2,7 +2,7 @@ import { getCurrentTimestamp } from "helpers/get-current-timestamp.ts";
 import Localbase from "localbase";
 
 import type { StopwatchQuestionModel, StopwatchTestModel } from "./models.ts";
-import type { StoreState } from "./store.tsx";
+import type { StoreState } from "./store.ts";
 
 const db = new Localbase("db");
 
@@ -14,7 +14,7 @@ export const testsCollection = () => db.collection<StopwatchTestModel>("tests");
 export function saveTestToDb(state: StoreState) {
   testsCollection()
     .add({
-      countedDuration: state.questionCountedDuration,
+      countedDuration: state.testCountedDuration,
       createdAt: state.createdAt,
       endedAt: getCurrentTimestamp(),
       id: state.testId,
