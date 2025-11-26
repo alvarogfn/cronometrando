@@ -1,10 +1,10 @@
 import { makeStyles } from "@fluentui/react-components";
-
+import ConfigurationMenu from "components/configuration-menu.tsx";
 import StatisticsTable from "components/statistics-table.tsx";
+
 import QuestionStopwatch from "./components/stopwatch-question.tsx";
 import StopwatchTest from "./components/stopwatch-test.tsx";
 import FluentProvider from "./providers/fluent-provider.tsx";
-import ConfigurationMenu from "components/configuration-menu.tsx";
 
 const useClasses = makeStyles({
   config: {

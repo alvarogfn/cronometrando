@@ -1,6 +1,6 @@
-import { makeStyles, type TableHeaderProps } from "@fluentui/react-components";
+import type {TableHeaderProps} from "@fluentui/react-components";
 
-import {
+import { makeStyles,
   TableBody,
   TableCell,
   TableRow,
@@ -9,8 +9,7 @@ import {
   TableHeaderCell,
   Card,
   tokens,
-  Text,
-} from "@fluentui/react-components";
+  Text  } from "@fluentui/react-components";
 import { formatSecondsToMMSS } from "helpers/format-seconds-to-mmss.ts";
 import { formatTimeToDDMMHHSS } from "helpers/format-time-to-ddmmhhss.ts";
 import { average, highest, lowest } from "helpers/statistics-helpers.ts";

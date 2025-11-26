@@ -1,5 +1,5 @@
 import type { TestWithQuestions } from "api/models.ts";
-import { type PropsWithChildren, useMemo } from "react";
+import type {PropsWithChildren} from "react";
 
 import {
   Button,
@@ -16,7 +16,7 @@ import {
 import { DeleteFilled } from "@fluentui/react-icons";
 import { buildQuestionChartParams } from "helpers/chart-helpers.ts";
 import { useTestDelete } from "hooks/use-test-delete.ts";
-import { lazy } from "react";
+import {  useMemo, lazy  } from "react";
 import { createPortal } from "react-dom";
 
 const LineChart = lazy(() => import("./line-chart"));
@@ -28,10 +28,10 @@ type StatisticsItemDialogProps = PropsWithChildren<{
 const useStyles = makeStyles({
   removeButton: {
     "&:hover": {
-      backgroundColor: tokens.colorStatusDangerBackground3Hover,
       "&:active": {
         backgroundColor: tokens.colorStatusDangerBackground3Pressed,
       },
+      backgroundColor: tokens.colorStatusDangerBackground3Hover,
     },
     backgroundColor: tokens.colorStatusDangerBackground3,
   },
