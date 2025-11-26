@@ -42,6 +42,19 @@ export function buildQuestionChartParams(
       labels: questions.map((_, index) => index + 1),
     },
     options: {
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label(context) {
+              return formatSecondsToMMSS(Number(context.formattedValue));
+            },
+            title(tooltipItems): string | string[] | void {
+              return tooltipItems.map((item) => "Questão " + item.label);
+            },
+          },
+          enabled: true,
+        },
+      },
       scales: merge<ChartOptions<"line">["scales"]>(
         {
           y: {

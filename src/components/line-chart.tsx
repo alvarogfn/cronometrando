@@ -12,11 +12,19 @@ import {
   LineElement,
   PointElement,
   Title,
+  Tooltip,
 } from "chart.js";
 import deepmerge from "deepmerge";
 import { Line } from "react-chartjs-2";
 
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title);
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  LineElement,
+  Title,
+);
 
 const useStyles = makeStyles({
   chart: {
