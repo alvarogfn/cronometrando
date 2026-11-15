@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node --test tests/github-pages-build.test.mjs",
     "commit": "git-cz",
     "preview": "vite preview",
     "lint": "eslint . --fix",
