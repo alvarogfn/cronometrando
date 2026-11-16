@@ -18,6 +18,7 @@ export function saveTestToDb(state: StoreState) {
       createdAt: state.createdAt,
       endedAt: getCurrentTimestamp(),
       id: state.testId,
+      name: state.testName.trim() || undefined,
       totalDuration: state.testTotalDuration,
     })
     .catch(console.warn);

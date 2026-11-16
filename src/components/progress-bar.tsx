@@ -1,4 +1,4 @@
-import { makeStyles, mergeClasses, tokens  } from "@fluentui/react-components";
+import { makeStyles, mergeClasses, tokens } from "@fluentui/react-components";
 
 import type { BaseProps } from "../helpers/base-props.ts";
 
@@ -27,7 +27,7 @@ const useClasses = makeStyles({
     backgroundColor: tokens.colorBrandBackground,
     borderRadius: tokens.borderRadiusLarge,
     height: "100%",
-    transition: "200ms width",
+    transition: "width 200ms ease, background-color 200ms ease",
     width: "100%",
   },
 });
@@ -38,10 +38,13 @@ function ProgressBar({
   timedOut = false,
 }: ProgressBarProps) {
   const classes = useClasses();
+  const remainingPercent = Number.isFinite(percentage)
+    ? Math.round(Math.min(Math.max(percentage, 0), 1) * 100)
+    : 0;
 
-  const style = timedOut
-    ? { backgroundColor: tokens.colorPaletteRedBackground3 }
-    : {};
+  const backgroundColor = timedOut
+    ? tokens.colorPaletteRedBackground3
+    : `color-mix(in srgb, ${tokens.colorBrandBackground} ${remainingPercent}%, ${tokens.colorPaletteRedBackground3} ${100 - remainingPercent}%)`;
 
   return (
     <div className={mergeClasses(className, classes.container)}>
@@ -49,7 +52,7 @@ function ProgressBar({
         className={classes.innerContainer}
         style={{
           width: widthWithPercentage(percentage),
-          ...style,
+          backgroundColor,
         }}
       />
     </div>

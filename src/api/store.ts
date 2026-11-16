@@ -30,6 +30,7 @@ export interface StoreProps {
   questionTotalDuration: number;
   testCountedDuration: number;
   testId: string;
+  testName: string;
 
   testTotalDuration: number;
 }
@@ -42,6 +43,7 @@ export interface StoreState extends StoreProps {
   setAutoShutdown: (newValue: boolean) => void;
   setQuestionDuration: (newDuration: number) => void;
   setTestDuration: (newDuration: number) => void;
+  setTestName: (newName: string) => void;
   start: Fn;
   stop: Fn;
   tick: Fn;
@@ -98,6 +100,7 @@ export const useStopwatchStore = create<StoreState>((set, get) => {
       set({ testTotalDuration: newDuration });
       setToStorage(TEST_STORAGE_KEY_DURATION, newDuration);
     },
+    setTestName: (newName: string) => set({ testName: newName }),
     start: () => {
       set((state) => {
         if (state.isStarted)
@@ -125,12 +128,14 @@ export const useStopwatchStore = create<StoreState>((set, get) => {
           questionId: nanoid(),
           testCountedDuration: 0,
           testId: nanoid(),
+          testName: "",
         };
       });
     },
     testCountedDuration: 0,
 
     testId: nanoid(),
+    testName: "",
     testTotalDuration: getFromStorage(
       TEST_STORAGE_KEY_DURATION,
       TEST_DEFAULT_DURATION,

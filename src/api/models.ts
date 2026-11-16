@@ -3,6 +3,7 @@ export interface StopwatchTestModel {
   createdAt: number;
   endedAt: number;
   id: string;
+  name?: string;
   totalDuration: number;
 }
 

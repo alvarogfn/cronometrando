@@ -6,16 +6,16 @@ import { webDarkTheme } from "@fluentui/react-components";
 import merge from "deepmerge";
 
 import { formatSecondsToMMSS } from "./format-seconds-to-mmss.ts";
-import { highest } from "./statistics-helpers.ts";
 
-const baseStyles: ChartOptions["scales"] = {
+const baseStyles: ChartOptions<"line">["scales"] = {
   x: {
-    border: { color: "#FFFFFF50" },
-    grid: { color: "#FFFFFF50" },
+    border: { color: "#FFFFFF30" },
+    grid: { color: "#FFFFFF18" },
     ticks: { color: "white" },
   },
   y: {
-    grid: { color: "#FFFFFF50" },
+    border: { color: "#FFFFFF30" },
+    grid: { color: "#FFFFFF18" },
     ticks: { color: "white" },
   },
 };
@@ -23,18 +23,54 @@ const baseStyles: ChartOptions["scales"] = {
 export function buildQuestionChartParams(
   questions: StopwatchQuestionModel[],
 ): Pick<ChartProps<"line">, "data" | "options"> {
-  const maxDuration = highest(
-    questions,
-    ({ countedDuration }) => countedDuration,
+  const durations = questions.map(({ countedDuration }) => countedDuration);
+  const minDuration = durations.length > 0 ? Math.min(...durations) : 0;
+  const maxDuration = durations.length > 0 ? Math.max(...durations) : 0;
+  const threshold = Math.max((maxDuration - minDuration) * 0.05, 1);
+  const yMin = Math.max(minDuration - threshold, 0);
+  const yMax = Math.max(maxDuration + threshold, yMin + 1);
+  const count = durations.length;
+  const meanX = count > 0 ? (count + 1) / 2 : 0;
+  const meanY =
+    durations.reduce((sum, duration) => sum + duration, 0) / (count || 1);
+  const varianceX = durations.reduce(
+    (sum, _, index) => sum + (index + 1 - meanX) ** 2,
+    0,
+  );
+  const covarianceXY = durations.reduce(
+    (sum, duration, index) => sum + (index + 1 - meanX) * (duration - meanY),
+    0,
+  );
+  const slope = varianceX === 0 ? 0 : covarianceXY / varianceX;
+  const intercept = meanY - slope * meanX;
+  const trendDurations = durations.map(
+    (_, index) => intercept + slope * (index + 1),
   );
 
   return {
     data: {
       datasets: [
         {
-          backgroundColor: webDarkTheme.colorBrandBackground2,
+          backgroundColor: webDarkTheme.colorBrandBackground,
           borderColor: webDarkTheme.colorBrandBackground,
-          data: questions.map((question) => question.countedDuration),
+          borderWidth: 2,
+          data: durations,
+          label: "Tempo por questão",
+          pointHoverRadius: 6,
+          pointRadius: 4,
+          tension: 0.25,
+          xAxisID: "x",
+          yAxisID: "y",
+        },
+        {
+          backgroundColor: "#FFB74D",
+          borderColor: "#FFB74D",
+          borderDash: [6, 4],
+          borderWidth: 2,
+          data: trendDurations,
+          label: "Tendência (regressão linear)",
+          pointRadius: 0,
+          tension: 0,
           xAxisID: "x",
           yAxisID: "y",
         },
@@ -46,7 +82,7 @@ export function buildQuestionChartParams(
         tooltip: {
           callbacks: {
             label(context) {
-              return formatSecondsToMMSS(Number(context.formattedValue));
+              return `${context.dataset.label}: ${formatSecondsToMMSS(Number(context.formattedValue))}`;
             },
             title(tooltipItems): string | string[] | void {
               return tooltipItems.map((item) => "Questão " + item.label);
@@ -54,20 +90,28 @@ export function buildQuestionChartParams(
           },
           enabled: true,
         },
+        legend: {
+          labels: {
+            color: "white",
+            usePointStyle: true,
+          },
+          position: "top",
+        },
       },
-      scales: merge<ChartOptions<"line">["scales"]>(
-        {
-          y: {
-            axis: "y",
-            beginAtZero: true,
-            max: maxDuration * 2,
-            ticks: {
-              callback: (value) => formatSecondsToMMSS(value as number),
-            },
+      scales: merge<ChartOptions<"line">["scales"]>(baseStyles, {
+        x: {
+          axis: "x",
+        },
+        y: {
+          axis: "y",
+          beginAtZero: false,
+          max: yMax,
+          min: yMin,
+          ticks: {
+            callback: (value) => formatSecondsToMMSS(value as number),
           },
         },
-        { ...baseStyles } as any,
-      ),
+      }),
     },
   };
 }

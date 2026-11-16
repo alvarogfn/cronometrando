@@ -10,6 +10,7 @@ import {
   Chart,
   LinearScale,
   LineElement,
+  Legend,
   PointElement,
   Title,
   Tooltip,
@@ -24,6 +25,7 @@ Chart.register(
   Tooltip,
   LineElement,
   Title,
+  Legend,
 );
 
 const useStyles = makeStyles({
@@ -35,8 +37,16 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     gap: "10px",
-    marginTop: "30px",
+    height: "100%",
+    minHeight: "360px",
+    marginTop: 0,
     overflow: "hidden",
+  },
+  plot: {
+    flex: "1 1 auto",
+    minHeight: "320px",
+    position: "relative",
+    width: "100%",
   },
 });
 
@@ -50,10 +60,13 @@ function LineChart({ className, title, ...props }: LineChartProps) {
   return (
     <div className={mergeClasses(classes.container, className)}>
       <Subtitle2>{title}</Subtitle2>
-      <div className={classes.chart} style={{ height: "300px", width: "100%" }}>
+      <div className={classes.plot}>
         <Line
           {...props}
-          options={deepmerge({ responsive: true }, { ...props.options })}
+          options={deepmerge(
+            { maintainAspectRatio: false, responsive: true },
+            { ...props.options },
+          )}
         />
       </div>
     </div>

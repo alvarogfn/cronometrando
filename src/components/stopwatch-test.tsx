@@ -1,9 +1,9 @@
 import {
-  Subtitle1,
   Card,
   CardHeader,
   Dialog,
   DialogTrigger,
+  Subtitle1,
 } from "@fluentui/react-components";
 import { TEST_DEFAULT_DURATION } from "api/constants.ts";
 import { useStopwatchStore } from "api/store.ts";
@@ -25,6 +25,7 @@ function StopwatchTest({ className }: StopwatchTestProps) {
     setTestDuration,
     start,
     stop,
+    testName,
     testCountedDuration,
     testTotalDuration,
   } = useStopwatchStore((state) => state);
@@ -38,7 +39,13 @@ function StopwatchTest({ className }: StopwatchTestProps) {
         disableButtonEnhancement
       >
         <Card appearance="filled" className={className}>
-          <CardHeader header={<Subtitle1>Prova</Subtitle1>} />
+          <CardHeader
+            header={
+              <Subtitle1>
+                {testName ? `Prova — ${testName}` : "Prova"}
+              </Subtitle1>
+            }
+          />
           <StopwatchTimer
             countedDuration={testCountedDuration}
             totalDuration={testTotalDuration}
