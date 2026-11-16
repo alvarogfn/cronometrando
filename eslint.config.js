@@ -16,6 +16,7 @@ const project = [
   "./tsconfig.node.json",
   "./tsconfig.json",
   "./tsconfig.app.json",
+  "./tsconfig.tests.json",
 ];
 
 export default defineConfig([

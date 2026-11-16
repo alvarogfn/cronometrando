@@ -11,8 +11,8 @@ export const questionsCollection = () =>
 
 export const testsCollection = () => db.collection<StopwatchTestModel>("tests");
 
-export function saveTestToDb(state: StoreState) {
-  testsCollection()
+export function saveTestToDb(state: StoreState): Promise<void> {
+  return testsCollection()
     .add({
       countedDuration: state.testCountedDuration,
       createdAt: state.createdAt,
@@ -24,8 +24,8 @@ export function saveTestToDb(state: StoreState) {
     .catch(console.warn);
 }
 
-export function saveQuestionToDb(state: StoreState) {
-  questionsCollection()
+export function saveQuestionToDb(state: StoreState): Promise<void> {
+  return questionsCollection()
     .add({
       countedDuration: state.questionCountedDuration,
       endedAt: getCurrentTimestamp(),

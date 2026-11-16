@@ -13,6 +13,12 @@ import {
 } from "./constants.ts";
 import { saveQuestionToDb, saveTestToDb } from "./db.ts";
 import { nanoid } from "./nanoid.ts";
+import {
+  canAdvanceQuestion,
+  getElapsedSnapshot,
+  getQuestionSnapshotOnStop,
+  parseStoredBoolean,
+} from "./stopwatch-logic.ts";
 import { tickEmitter } from "./tick-emitter.ts";
 
 export interface StoreProps {
@@ -25,12 +31,16 @@ export interface StoreProps {
 
   isStarted: boolean;
   questionCountedDuration: number;
+  questionElapsedMilliseconds: number;
   questionId: string;
+  questionSegmentStartedAt: number | undefined;
 
   questionTotalDuration: number;
   testCountedDuration: number;
+  testElapsedMilliseconds: number;
   testId: string;
   testName: string;
+  testSegmentStartedAt: number | undefined;
 
   testTotalDuration: number;
 }
@@ -49,12 +59,25 @@ export interface StoreState extends StoreProps {
   tick: Fn;
 }
 
+let pendingQuestionWrites: Promise<void>[] = [];
+
+function queueQuestionSave(state: StoreState) {
+  const write = saveQuestionToDb(state);
+  pendingQuestionWrites.push(write);
+  void write.finally(() => {
+    pendingQuestionWrites = pendingQuestionWrites.filter(
+      (pendingWrite) => pendingWrite !== write,
+    );
+  });
+}
+
+const getMonotonicTime = () => performance.now();
+
 export const useStopwatchStore = create<StoreState>((set, get) => {
   return {
-    autoShutdown: getFromStorage<boolean>(
-      QUESTION_STORAGE_KEY_DURATION,
+    autoShutdown: parseStoredBoolean(
+      getFromStorage<string>(AUTO_SHUTDOWN_STORAGE_KEY_DURATION, ""),
       false,
-      Boolean,
     ),
 
     createdAt: getCurrentTimestamp(),
@@ -66,26 +89,95 @@ export const useStopwatchStore = create<StoreState>((set, get) => {
     isStarted: false,
 
     nextQuestion: () => {
-      set((state) => {
-        saveQuestionToDb({ ...state });
+      const state = get();
+      if (!canAdvanceQuestion(state.isStarted)) return;
 
-        return {
-          questionCountedDuration: 0,
-          questionId: nanoid(),
-        };
+      const now = getMonotonicTime();
+      const testElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.testElapsedMilliseconds,
+          segmentStartedAt: state.testSegmentStartedAt,
+        },
+        now,
+      );
+      const questionElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.questionElapsedMilliseconds,
+          segmentStartedAt: state.questionSegmentStartedAt,
+        },
+        now,
+      );
+
+      queueQuestionSave({
+        ...state,
+        questionCountedDuration: questionElapsed.countedDuration,
+        questionElapsedMilliseconds: questionElapsed.elapsedMilliseconds,
+        testCountedDuration: testElapsed.countedDuration,
+        testElapsedMilliseconds: testElapsed.elapsedMilliseconds,
+      });
+
+      set({
+        questionCountedDuration: 0,
+        questionElapsedMilliseconds: 0,
+        questionId: nanoid(),
+        questionSegmentStartedAt: state.isPaused ? undefined : now,
+        testCountedDuration: testElapsed.countedDuration,
+        testElapsedMilliseconds: testElapsed.elapsedMilliseconds,
+        testSegmentStartedAt: state.isPaused ? undefined : now,
       });
     },
 
-    pause: () => set({ isPaused: true }),
+    pause: () => {
+      const state = get();
+      if (!state.isStarted || state.isPaused) return;
+
+      const now = getMonotonicTime();
+      const testElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.testElapsedMilliseconds,
+          segmentStartedAt: state.testSegmentStartedAt,
+        },
+        now,
+      );
+      const questionElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.questionElapsedMilliseconds,
+          segmentStartedAt: state.questionSegmentStartedAt,
+        },
+        now,
+      );
+
+      set({
+        isPaused: true,
+        questionCountedDuration: questionElapsed.countedDuration,
+        questionElapsedMilliseconds: questionElapsed.elapsedMilliseconds,
+        questionSegmentStartedAt: undefined,
+        testCountedDuration: testElapsed.countedDuration,
+        testElapsedMilliseconds: testElapsed.elapsedMilliseconds,
+        testSegmentStartedAt: undefined,
+      });
+    },
     questionCountedDuration: 0,
 
+    questionElapsedMilliseconds: 0,
     questionId: nanoid(),
+    questionSegmentStartedAt: undefined,
     questionTotalDuration: getFromStorage(
       QUESTION_STORAGE_KEY_DURATION,
       QUESTION_DEFAULT_DURATION,
     ),
     refresh: () => set({ id: nanoid() }),
-    resume: () => set({ isPaused: false }),
+    resume: () => {
+      const state = get();
+      if (!state.isStarted || !state.isPaused) return;
+
+      const now = getMonotonicTime();
+      set({
+        isPaused: false,
+        questionSegmentStartedAt: now,
+        testSegmentStartedAt: now,
+      });
+    },
     setAutoShutdown: (newValue: boolean) => {
       set({ autoShutdown: newValue });
       setToStorage(AUTO_SHUTDOWN_STORAGE_KEY_DURATION, newValue);
@@ -102,40 +194,82 @@ export const useStopwatchStore = create<StoreState>((set, get) => {
     },
     setTestName: (newName: string) => set({ testName: newName }),
     start: () => {
-      set((state) => {
-        if (state.isStarted)
-          throw new Error("The stopwatch has already started");
+      const state = get();
+      if (state.isStarted) throw new Error("The stopwatch has already started");
 
-        return {
-          countedDuration: 0,
-          createdAt: getCurrentTimestamp(),
-          isPaused: false,
-          isStarted: true,
-        };
+      const now = getMonotonicTime();
+      set({
+        createdAt: getCurrentTimestamp(),
+        isPaused: false,
+        isStarted: true,
+        questionCountedDuration: 0,
+        questionElapsedMilliseconds: 0,
+        questionSegmentStartedAt: now,
+        testCountedDuration: 0,
+        testElapsedMilliseconds: 0,
+        testSegmentStartedAt: now,
       });
     },
 
     stop: () => {
-      set((state) => {
-        if (!state.isStarted) throw new Error("The stopwatch was not started");
-        saveTestToDb({ ...state });
+      const state = get();
+      if (!state.isStarted) throw new Error("The stopwatch was not started");
 
-        return {
-          id: nanoid(),
-          isPaused: false,
-          isStarted: false,
-          questionCountedDuration: 0,
-          questionId: nanoid(),
-          testCountedDuration: 0,
-          testId: nanoid(),
-          testName: "",
-        };
+      const now = getMonotonicTime();
+      const testElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.testElapsedMilliseconds,
+          segmentStartedAt: state.testSegmentStartedAt,
+        },
+        now,
+      );
+      const questionElapsed = getQuestionSnapshotOnStop(
+        state.isStarted,
+        {
+          accumulatedMilliseconds: state.questionElapsedMilliseconds,
+          segmentStartedAt: state.questionSegmentStartedAt,
+        },
+        now,
+      );
+      const finalState = {
+        ...state,
+        questionCountedDuration:
+          questionElapsed?.countedDuration ?? state.questionCountedDuration,
+        questionElapsedMilliseconds:
+          questionElapsed?.elapsedMilliseconds ??
+          state.questionElapsedMilliseconds,
+        testCountedDuration: testElapsed.countedDuration,
+        testElapsedMilliseconds: testElapsed.elapsedMilliseconds,
+      };
+      const writes = [...pendingQuestionWrites];
+
+      if (questionElapsed) writes.push(saveQuestionToDb(finalState));
+      writes.push(saveTestToDb(finalState));
+
+      set({
+        isPaused: false,
+        isStarted: false,
+        questionCountedDuration: 0,
+        questionElapsedMilliseconds: 0,
+        questionId: nanoid(),
+        questionSegmentStartedAt: undefined,
+        testCountedDuration: 0,
+        testElapsedMilliseconds: 0,
+        testId: nanoid(),
+        testName: "",
+        testSegmentStartedAt: undefined,
       });
+
+      void Promise.all(writes)
+        .then(() => get().refresh())
+        .catch(console.warn);
     },
     testCountedDuration: 0,
 
+    testElapsedMilliseconds: 0,
     testId: nanoid(),
     testName: "",
+    testSegmentStartedAt: undefined,
     testTotalDuration: getFromStorage(
       TEST_STORAGE_KEY_DURATION,
       TEST_DEFAULT_DURATION,
@@ -144,17 +278,30 @@ export const useStopwatchStore = create<StoreState>((set, get) => {
       const state = get();
       if (!state.isStarted || state.isPaused) return;
 
-      const newTestCountedDuration = state.testCountedDuration + 1;
-      const newQuestionCountedDuration = state.questionCountedDuration + 1;
+      const now = getMonotonicTime();
+      const testElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.testElapsedMilliseconds,
+          segmentStartedAt: state.testSegmentStartedAt,
+        },
+        now,
+      );
+      const questionElapsed = getElapsedSnapshot(
+        {
+          accumulatedMilliseconds: state.questionElapsedMilliseconds,
+          segmentStartedAt: state.questionSegmentStartedAt,
+        },
+        now,
+      );
 
       set({
-        questionCountedDuration: newQuestionCountedDuration,
-        testCountedDuration: newTestCountedDuration,
+        questionCountedDuration: questionElapsed.countedDuration,
+        testCountedDuration: testElapsed.countedDuration,
       });
 
       if (!state.autoShutdown) return;
 
-      if (newTestCountedDuration >= state.testTotalDuration) {
+      if (testElapsed.countedDuration >= state.testTotalDuration) {
         state.stop();
       }
     },
