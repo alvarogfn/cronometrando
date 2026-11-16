@@ -12,7 +12,6 @@ const useClasses = makeStyles({
   },
   container: {
     display: "grid",
-    flexFlow: "column wrap",
     gap: "10px",
     gridTemplateAreas: "'a a b' 'a a b' 'c c c' 'd d d'",
     gridTemplateColumns: "1fr 1fr 1fr",
@@ -20,22 +19,41 @@ const useClasses = makeStyles({
     margin: "0 auto",
     maxWidth: "1000px",
     width: "100%",
+    "@media (max-width: 700px)": {
+      gap: "12px",
+      gridTemplateAreas: "'a' 'b' 'c' 'd'",
+      gridTemplateColumns: "minmax(0, 1fr)",
+      gridTemplateRows: "auto auto auto minmax(300px, 1fr)",
+    },
   },
   gridItem: {
     height: "100%",
+    minWidth: 0,
     width: "100%",
+    "@media (max-width: 700px)": {
+      height: "auto",
+    },
   },
   questionStopwatch: {
     gridArea: "a",
   },
   root: {
     alignItems: "center",
+    boxSizing: "border-box",
     display: "flex",
-    height: "100vh",
+    minHeight: "100vh",
     justifyContent: "center",
     margin: "0 auto",
     maxWidth: "calc(100vw - 30px)",
-    width: "100vw",
+    padding: "15px 0",
+    width: "100%",
+    "@media (max-width: 700px)": {
+      alignItems: "stretch",
+      height: "auto",
+      maxWidth: "none",
+      padding:
+        "max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom))",
+    },
   },
   statistics: {
     gridArea: "d",

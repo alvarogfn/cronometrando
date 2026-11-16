@@ -12,6 +12,7 @@ import {
   DialogTitle,
   Input,
   makeStyles,
+  mergeClasses,
   TableBody,
   TableCell,
   Table,
@@ -33,22 +34,74 @@ import type { BaseProps } from "../helpers/base-props.ts";
 
 import StatisticsItemDialog from "./statistics-item-dialog.tsx";
 
-const columns = [
+const columns: {
+  columnKey: string;
+  compactHidden?: boolean;
+  label: string;
+}[] = [
   { columnKey: "id", label: "Prova" },
-  { columnKey: "average", label: "Média / Ques." },
-  { columnKey: "longerTime", label: "Maior tempo / Ques." },
-  { columnKey: "shorterTime", label: "Menor tempo / Ques." },
-  { columnKey: "quantity", label: "Resolvidas / Prova" },
-  { columnKey: "testDuration", label: "Duração / Prova" },
-  { columnKey: "date", label: "Dia e Hora" },
+  { columnKey: "average", label: "Média / Ques.", compactHidden: true },
+  {
+    columnKey: "longerTime",
+    label: "Maior tempo / Ques.",
+    compactHidden: true,
+  },
+  {
+    columnKey: "shorterTime",
+    label: "Menor tempo / Ques.",
+    compactHidden: true,
+  },
+  { columnKey: "quantity", label: "Questões" },
+  { columnKey: "testDuration", label: "Duração" },
+  { columnKey: "date", label: "Dia e hora" },
 ];
 
 interface StatisticsTableProps extends BaseProps {}
 
 const useStyles = makeStyles({
-  table: {
-    "&::-webkit-scrollbar": {
+  compactHidden: {
+    "@media (max-width: 700px)": {
       display: "none",
+    },
+  },
+  dateColumn: {
+    minWidth: "140px",
+    whiteSpace: "nowrap",
+    width: "140px",
+    "@media (max-width: 700px)": {
+      fontSize: "11px",
+      minWidth: "118px",
+      width: "118px",
+    },
+  },
+  durationColumn: {
+    "@media (max-width: 700px)": {
+      minWidth: "74px",
+      width: "74px",
+    },
+  },
+  quantityColumn: {
+    "@media (max-width: 700px)": {
+      minWidth: "54px",
+      textAlign: "center",
+      width: "54px",
+    },
+  },
+  statisticsCard: {
+    height: "400px",
+    minWidth: 0,
+    width: "100%",
+    "@media (max-width: 700px)": {
+      height: "min(55vh, 400px)",
+      minHeight: "280px",
+    },
+  },
+  table: {
+    maxWidth: "100%",
+    overflowX: "auto",
+    width: "100%",
+    "@media (min-width: 701px)": {
+      "&::-webkit-scrollbar": { display: "none" },
     },
   },
   tableHeader: {
@@ -58,6 +111,10 @@ const useStyles = makeStyles({
   testNameColumn: {
     minWidth: "220px",
     width: "220px",
+    "@media (max-width: 700px)": {
+      minWidth: "100px",
+      width: "100px",
+    },
   },
 });
 
@@ -104,7 +161,7 @@ function StatisticsTable({ className }: StatisticsTableProps) {
 
   return (
     <>
-      <Card className={className} style={{ height: 400 }}>
+      <Card className={mergeClasses(className, classes.statisticsCard)}>
         <TableVirtuoso
           className={classes.table}
           components={{
@@ -122,16 +179,19 @@ function StatisticsTable({ className }: StatisticsTableProps) {
                 {columns.map((column) => (
                   <TableHeaderCell
                     className={
-                      column.columnKey === "id"
-                        ? classes.testNameColumn
-                        : undefined
+                      column.compactHidden
+                        ? classes.compactHidden
+                        : column.columnKey === "id"
+                          ? classes.testNameColumn
+                          : column.columnKey === "quantity"
+                            ? classes.quantityColumn
+                            : column.columnKey === "testDuration"
+                              ? classes.durationColumn
+                              : column.columnKey === "date"
+                                ? classes.dateColumn
+                                : undefined
                     }
                     key={column.columnKey}
-                    style={
-                      column.columnKey === "date"
-                        ? { minWidth: "140px", width: "140px" }
-                        : undefined
-                    }
                   >
                     {column.label}
                   </TableHeaderCell>
@@ -157,20 +217,22 @@ function StatisticsTable({ className }: StatisticsTableProps) {
                     {item.name?.trim() || "Prova sem nome"}
                   </Text>
                 </TableCell>
-                <TableCell>{formatSecondsToMMSS(questionAverage)}</TableCell>
-                <TableCell>{formatSecondsToMMSS(questionHightest)}</TableCell>
-                <TableCell>{formatSecondsToMMSS(questionLowest)}</TableCell>
-                <TableCell>{item.questions.length}</TableCell>
-                <TableCell>
+                <TableCell className={classes.compactHidden}>
+                  {formatSecondsToMMSS(questionAverage)}
+                </TableCell>
+                <TableCell className={classes.compactHidden}>
+                  {formatSecondsToMMSS(questionHightest)}
+                </TableCell>
+                <TableCell className={classes.compactHidden}>
+                  {formatSecondsToMMSS(questionLowest)}
+                </TableCell>
+                <TableCell className={classes.quantityColumn}>
+                  {item.questions.length}
+                </TableCell>
+                <TableCell className={classes.durationColumn}>
                   {formatSecondsToMMSS(item.countedDuration)}
                 </TableCell>
-                <TableCell
-                  style={{
-                    minWidth: "140px",
-                    whiteSpace: "nowrap",
-                    width: "140px",
-                  }}
-                >
+                <TableCell className={classes.dateColumn}>
                   {formatTimeToDDMMHHSS(item.endedAt)}
                 </TableCell>
               </>
@@ -185,7 +247,7 @@ function StatisticsTable({ className }: StatisticsTableProps) {
         }}
         open={testToRename !== null}
       >
-        <DialogSurface style={{ width: "360px" }}>
+        <DialogSurface style={{ width: "min(360px, 92vw)" }}>
           <DialogBody>
             <DialogTitle>Editar nome da prova</DialogTitle>
             <DialogContent>

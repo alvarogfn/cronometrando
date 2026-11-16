@@ -41,12 +41,18 @@ const useStyles = makeStyles({
     minHeight: "360px",
     marginTop: 0,
     overflow: "hidden",
+    "@media (max-width: 700px)": {
+      minHeight: "280px",
+    },
   },
   plot: {
     flex: "1 1 auto",
     minHeight: "320px",
     position: "relative",
     width: "100%",
+    "@media (max-width: 700px)": {
+      minHeight: "240px",
+    },
   },
 });
 

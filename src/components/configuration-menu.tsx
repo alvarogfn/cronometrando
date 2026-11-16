@@ -22,6 +22,10 @@ const useStyles = makeStyles({
     display: "flex",
     gap: "10px",
     flexFlow: "row no-wrap",
+    width: "100%",
+    "@media (max-width: 700px)": {
+      flexWrap: "wrap",
+    },
   },
 });
 
@@ -61,7 +65,7 @@ function ConfigurationMenu({ className }: ConfigurationMenuProps) {
         onOpenChange={(_, data) => setIsNameDialogOpen(data.open)}
         open={isNameDialogOpen}
       >
-        <DialogSurface style={{ width: "360px" }}>
+        <DialogSurface style={{ width: "min(360px, 92vw)" }}>
           <DialogBody>
             <DialogTitle>Nome da prova</DialogTitle>
             <DialogContent>

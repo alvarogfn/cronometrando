@@ -47,6 +47,9 @@ const useStyles = makeStyles({
   chart: {
     flex: "1 1 auto",
     minHeight: "360px",
+    "@media (max-width: 700px)": {
+      minHeight: "280px",
+    },
   },
   dialogSurface: {
     display: "flex",
@@ -55,6 +58,12 @@ const useStyles = makeStyles({
     maxHeight: "90vh",
     maxWidth: "1200px",
     width: "90vw",
+    "@media (max-width: 700px)": {
+      height: "92vh",
+      maxHeight: "92vh",
+      maxWidth: "none",
+      width: "calc(100vw - 16px)",
+    },
   },
   removeButton: {
     "&:hover": {
@@ -69,17 +78,27 @@ const useStyles = makeStyles({
     alignItems: "center",
     display: "flex",
     gap: "8px",
+    "@media (max-width: 700px)": {
+      flexWrap: "wrap",
+      justifyContent: "flex-end",
+    },
   },
   title: {
     alignItems: "center",
     display: "flex",
+    gap: "8px",
     justifyContent: "space-between",
+    minWidth: 0,
+    "@media (max-width: 700px)": {
+      alignItems: "flex-start",
+      flexWrap: "wrap",
+    },
   },
   summary: {
     display: "grid",
     flex: "0 0 auto",
     gap: "10px",
-    gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
     marginTop: "14px",
   },
   summaryItem: {
